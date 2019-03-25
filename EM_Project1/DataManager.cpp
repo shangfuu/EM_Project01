@@ -87,6 +87,14 @@ std::vector<Vector> DataManager::GetVectors()
 	return Vectors;
 }
 
+bool DataManager::HasVector()
+{
+	if (this->Vectors.size()) {
+		return true;
+	}
+	return false;
+}
+
 void DataManager::SetFileName(std::string fileName)
 {
 	FileName = fileName;
@@ -185,4 +193,12 @@ bool DataManager::LoadMatrixData()
 std::vector<Matrix> DataManager::GetMatrices()
 {
 	return Matrices;
+}
+
+bool DataManager::HasMatrix()
+{
+	if (this->Matrices.size()) {
+		return true;
+	}
+	return false;
 }

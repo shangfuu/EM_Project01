@@ -305,434 +305,444 @@ namespace EM_Project1 {
 
 			/* 判斷錯誤指令 */
 			VECTOR_ERROR Error = Correct;
+			
+			
+			// 如果有 Load Vector
+			if (dataManager->HasVector()) {
 
-			//字串比較，若指令為"print"的情況
-			if (userCommand[0] == "print")
-			{
-				//定意輸出暫存
-				String^ outputTemp = "";
-				//透過for迴圈，從向量資料中找出對應變數
-				for (unsigned int i = 0; i < vectors.size(); i++)
+				//字串比較，若指令為"print"的情況
+				if (userCommand[0] == "print")
 				{
-					//若變數名稱與指令變數名稱符合
-					if (userCommand[1] == gcnew String(vectors[i].Name.c_str()))
+					//定意輸出暫存
+					String^ outputTemp = "";
+					//透過for迴圈，從向量資料中找出對應變數
+					for (unsigned int i = 0; i < vectors.size(); i++)
 					{
-						//將輸出格式存入暫存
-						outputTemp += "[";
-						//將輸出資料存入暫存
-						for (unsigned int j = 0; j < vectors[i].Data.size(); j++)
+						//若變數名稱與指令變數名稱符合
+						if (userCommand[1] == gcnew String(vectors[i].Name.c_str()))
 						{
-							outputTemp += vectors[i].Data[j].ToString();
-							if (j != vectors[i].Data.size() - 1)
-								outputTemp += ",";
-						}
-						//將輸出格式存入暫存，並且換行
-						outputTemp += "]" + Environment::NewLine;
-						//輸出暫存資訊
-						Output->Text += gcnew String(vectors[i].Name.c_str()) + " = " + outputTemp;
-						break;
-					}
-				}
-			}
-			else if (userCommand[0] == "MVS") {
-
-				Vector result = MVS(userCommand,vectors,Error);
-
-				if (Error == Correct) {
-					Output->Text += "-->" + Environment::NewLine;
-					for (int i = 0; i < result.getDim(); i++) {
-						Output->Text += result.Data[i].ToString() + "  ";
-					}
-					Output->Text += Environment::NewLine;
-				}
-			}
-			else if (userCommand[0] == "Dot") {
-				Vector vec1, vec2;
-				// 指令格式
-				Format_Two(userCommand, vectors, Error, vec1, vec2);
-
-				if (Error == Correct) {
-					/* 維度相同才可 Dot*/
-					if (vec1.getDim() != vec2.getDim()) {
-						Error = Dim_Error;
-					}
-					else {
-						Vector tmp = vec1 * vec2;
-
-						/* 輸出處理 */
-						Output->Text += "-->" + Environment::NewLine;
-						for (int i = 0; i < tmp.getDim(); i++) {
-							Output->Text += "  " + tmp.Data[i].ToString();
-						}
-						Output->Text += Environment::NewLine;
-					}
-				}
-				else if (Error == E_Error) {
-					Error = DOT_Error;
-				}
-			}
-			else if (userCommand[0] == "Add") {
-
-				Vector vec1, vec2;
-				// 指令格式
-				Format_Two(userCommand, vectors, Error, vec1, vec2);
-
-				if (Error == Correct) {
-					/* 維度相同才可 Add*/
-					if (vec1.getDim() != vec2.getDim()) {
-						Error = Dim_Error;
-					}
-					else {
-						Vector tmp = vec1 + vec2;
-
-						/* 輸出處理 */
-						Output->Text += "-->" + Environment::NewLine;
-						for (int i = 0; i < tmp.getDim(); i++) {
-							Output->Text += "  " + tmp.Data[i].ToString();
-						}
-						Output->Text += Environment::NewLine;
-					}
-				}
-				else if (Error == E_Error) {
-					Error = ADD_Error;
-				}
-
-			}
-			else if (userCommand[0] == "Scalar") {
-
-				Vector vec1, vec2;
-				// 指令格式
-				Format_Two(userCommand, vectors, Error, vec1, vec2);
-
-				if (Error == Correct) {
-					// 維度至少要一個一維
-					if (vec1.getDim() > 1 && vec2.getDim() > 1) {
-						Error = Dim_Error;
-					}
-					else {
-						Vector tmp = Scalar(vec1, vec2);
-
-						Output->Text += "-->" + Environment::NewLine;
-						for (int i = 0; i < tmp.getDim(); i++) {
-							Output->Text += tmp.Data[i].ToString();
-						}
-						Output->Text += Environment::NewLine;
-					}
-				}
-				else if (Error == E_Error) {
-					Error = SCA_Error;
-				}
-			}
-			else if (userCommand[0] == "Norm") {
-				Vector vec;
-				// 指令格式
-				Format_One(userCommand, vectors, Error, vec);
-
-				if (Error == Correct) {
-					double tmp = Norm(vec);
-
-					Output->Text += "-->" + Environment::NewLine + tmp.ToString() + "  " + Environment::NewLine;
-				}
-				else if (Error == E_Error) {
-					Error = NORM_Error;
-				}
-			}
-			else if (userCommand[0] == "Normal") {
-				/* Normal 只處理單一向量 */
-				Vector vec;
-				// 指令格式
-				Format_One(userCommand, vectors, Error, vec);
-
-				if (Error == Correct) {
-					Vector tmp = Normal(vec);
-
-					Output->Text += "-->" + Environment::NewLine;
-					for (int i = 0; i < tmp.getDim(); i++) {
-						Output->Text += tmp.Data[i].ToString() + "  ";
-					}
-					Output->Text += Environment::NewLine;
-				}
-				else if (Error == E_Error) {
-					Error = NML_Error;
-				}
-			}
-			else if (userCommand[0] == "Cross") {
-				Vector vec1, vec2;
-				// 指令格式
-				Format_Two(userCommand, vectors, Error, vec1, vec2);
-
-				if (Error == Correct) {
-					// 只處理三維
-					if (vec1.getDim() != 3 && vec2.getDim() != 3) {
-						Error = Dim_Error;
-					}
-					else {
-						Vector tmp = Cross(vec1, vec2);
-
-						/* 處理輸出 */
-						Output->Text += "-->" + Environment::NewLine;
-						for (int i = 0; i < tmp.getDim(); i++) {
-							Output->Text += tmp.Data[i].ToString() + "  ";
-						}
-						Output->Text += Environment::NewLine;
-					}
-				}
-				else if (Error == E_Error) {
-					Error = CRS_Error;
-				}
-			}
-			else if (userCommand[0] == "Com") {
-				Vector vec1, vec2;
-				// 指令格式
-				Format_Two(userCommand, vectors, Error, vec1, vec2);
-
-				if (Error == Correct) {
-					if (vec1.getDim() != vec2.getDim()) {
-						Error = Dim_Error;
-					}
-					else {
-						Vector tmp = Comp(vec1, vec2);
-
-						/* 處理輸出 */
-						Output->Text += "-->" + Environment::NewLine;
-						for (int i = 0; i < tmp.getDim(); i++) {
-							Output->Text += tmp.Data[i].ToString() + "  ";
-						}
-						Output->Text += Environment::NewLine;
-					}
-				}
-				else if (Error == E_Error) {
-					Error = COM_Error;
-				}
-			}
-			else if (userCommand[0] == "Proj") {
-				Vector vec1, vec2;
-				// 指令格式
-				Format_Two(userCommand, vectors, Error, vec1, vec2);
-
-				if (Error == Correct) {
-					if (vec1.getDim() != vec2.getDim()) {
-						Error = Dim_Error;
-					}
-					else {
-						Vector tmp = Proj(vec1, vec2);
-						/* 輸出處理 */
-						Output->Text += "-->" + Environment::NewLine;
-						for (int i = 0; i < tmp.getDim(); i++) {
-							Output->Text += tmp.Data[i].ToString() + "  ";
-						}
-						Output->Text += Environment::NewLine;
-					}
-				}
-				else if (Error == E_Error) {
-					Error = PRJ_Error;
-				}
-			}
-			else if (userCommand[0] == "Area") {
-				Vector vec1, vec2;
-				// 指令格式
-				Format_Two(userCommand, vectors, Error, vec1, vec2);
-
-				if (Error == Correct) {
-					if (vec1.getDim() != vec2.getDim()) {
-						Error = Dim_Error;
-					}
-					else {
-						double trigArea = TrigArea(vec1, vec2);
-
-						/* 處理輸出 */
-						Output->Text += "-->" + Environment::NewLine + trigArea.ToString() + Environment::NewLine;
-					}
-				}
-				else if(Error == E_Error) {
-					Error = AREA_Error;
-				}
-			}
-			else if (userCommand[0] == "IsPrl") {
-
-				Vector vec1, vec2;
-				// 指令格式
-				Format_Two(userCommand, vectors, Error, vec1, vec2);
-
-				
-				if (Error == Correct) {
-					if (vec1.getDim() != vec2.getDim()) {
-						Error = Dim_Error;
-					}
-					else {
-						bool isPrl = IsParal(vec1, vec2);
-
-						std::string Ans = "";
-						if (isPrl) Ans = "Yes";
-						else Ans = "No";
-						Output->Text += "-->" + Environment::NewLine + gcnew String(Ans.c_str()) + Environment::NewLine;
-					}
-				}
-				else if (Error == E_Error) {
-					Error = IsPRL_Error;
-				}
-			}
-			else if (userCommand[0] == "IsOrtg") {
-				Vector vec1, vec2;
-				// 指令格式
-				Format_Two(userCommand, vectors, Error, vec1, vec2);
-
-				if (Error == Correct) {
-					if (vec1.getDim() != vec2.getDim()) {
-						Error = Dim_Error;
-					}
-					else {
-						bool isOrg = IsOrthog(vec1, vec2);
-
-						std::string Ans = "";
-						if (isOrg) Ans = "Yes";
-						else Ans = "No";
-						Output->Text += "-->" + Environment::NewLine + gcnew String(Ans.c_str()) + Environment::NewLine;
-					}
-				}
-				else if (Error == E_Error) {
-					Error = IsORTG_Error;
-				}
-			}
-			else if (userCommand[0] == "Angle") {
-				Vector vec1, vec2;
-				// 指令格式
-				Format_Two(userCommand, vectors, Error, vec1, vec2);
-
-				if (Error == Correct) {
-					if (vec1.getDim() != vec2.getDim()) {
-						Error = Dim_Error;
-					}
-					else {
-						double theta = Angle(vec1, vec2);
-
-						std::string Ans = "";
-						Output->Text += "-->" + Environment::NewLine + "theta = " + theta.ToString() + Environment::NewLine;
-					}
-				}
-				else if (Error == E_Error) {
-					Error = ANG_Error;
-				}
-			}
-			else if (userCommand[0] == "pN") {
-				// 此項讀取"pn" 和 "Cross"一樣 輸出product() 都是算外積
-
-				Vector vec1, vec2;
-				// 指令格式
-				Format_Two(userCommand, vectors, Error, vec1, vec2);
-
-				if (Error == Correct) {
-					// 只處理三維
-					if (vec1.getDim() != 3 && vec2.getDim() != 3) {
-						Error = Dim_Error;
-					}
-					else {
-						Vector tmp = Cross(vec1, vec2);
-
-						/* 處理輸出 */
-						Output->Text += "-->" + Environment::NewLine;
-						for (int i = 0; i < tmp.getDim(); i++) {
-							Output->Text += tmp.Data[i].ToString() + "  ";
-						}
-						Output->Text += Environment::NewLine;
-					}
-				}
-				else if (Error == E_Error) {
-					Error = PN_Error;
-				}
-			}
-			else if (userCommand[0] == "IsLI") {
-				// 支援多項量輸入
-				Output->Text += "- Function NOT Finish Yet -" + Environment::NewLine;
-			}
-			else if (userCommand[0] == "Ob") {
-				// 支援多項量輸入
-				std::vector<Vector>vecs;
-				Format_Muti(userCommand, vectors, Error, vecs);
-
-				if (Error == Correct) {
-					for (int i = 0; i < vecs.size() - 1; i++) {
-						if (vecs[i].getDim() != vecs[i+1].getDim()) {
-							Error = Dim_Error;
+							//將輸出格式存入暫存
+							outputTemp += "[";
+							//將輸出資料存入暫存
+							for (unsigned int j = 0; j < vectors[i].Data.size(); j++)
+							{
+								outputTemp += vectors[i].Data[j].ToString();
+								if (j != vectors[i].Data.size() - 1)
+									outputTemp += ",";
+							}
+							//將輸出格式存入暫存，並且換行
+							outputTemp += "]" + Environment::NewLine;
+							//輸出暫存資訊
+							Output->Text += gcnew String(vectors[i].Name.c_str()) + " = " + outputTemp;
 							break;
 						}
 					}
+				}
+				else if (userCommand[0] == "MVS") {
+
+					Vector result = MVS(userCommand, vectors, Error);
+
 					if (Error == Correct) {
-						std::vector<Vector> tmp = Ob(vecs);
-						/* 輸出處理 */
-						Output->Text += "-->" + Environment::NewLine + gcnew String("normal") + "  " + tmp.size().ToString() + Environment::NewLine;
-						for (unsigned int i = 0; i < tmp.size(); i++) {
-							for (unsigned int j = 0; j < tmp[i].getDim(); j++) {
-								Output->Text += tmp[i].Data[j].ToString() + "  ";
-							}
-							Output->Text += Environment::NewLine + Environment::NewLine;
+						Output->Text += "-->" + Environment::NewLine;
+						for (int i = 0; i < result.getDim(); i++) {
+							Output->Text += result.Data[i].ToString() + "  ";
 						}
-						
+						Output->Text += Environment::NewLine;
 					}
 				}
-				else if (Error == E_Error) {
-					Error = OB_Error;
+				else if (userCommand[0] == "Dot") {
+					Vector vec1, vec2;
+					// 指令格式
+					Format_Two(userCommand, vectors, Error, vec1, vec2);
+
+					if (Error == Correct) {
+						/* 維度相同才可 Dot*/
+						if (vec1.getDim() != vec2.getDim()) {
+							Error = Dim_Error;
+						}
+						else {
+							Vector tmp = vec1 * vec2;
+
+							/* 輸出處理 */
+							Output->Text += "-->" + Environment::NewLine;
+							for (int i = 0; i < tmp.getDim(); i++) {
+								Output->Text += "  " + tmp.Data[i].ToString();
+							}
+							Output->Text += Environment::NewLine;
+						}
+					}
+					else if (Error == E_Error) {
+						Error = DOT_Error;
+					}
 				}
+				else if (userCommand[0] == "Add") {
+
+					Vector vec1, vec2;
+					// 指令格式
+					Format_Two(userCommand, vectors, Error, vec1, vec2);
+
+					if (Error == Correct) {
+						/* 維度相同才可 Add*/
+						if (vec1.getDim() != vec2.getDim()) {
+							Error = Dim_Error;
+						}
+						else {
+							Vector tmp = vec1 + vec2;
+
+							/* 輸出處理 */
+							Output->Text += "-->" + Environment::NewLine;
+							for (int i = 0; i < tmp.getDim(); i++) {
+								Output->Text += "  " + tmp.Data[i].ToString();
+							}
+							Output->Text += Environment::NewLine;
+						}
+					}
+					else if (Error == E_Error) {
+						Error = ADD_Error;
+					}
+
+				}
+				else if (userCommand[0] == "Scalar") {
+
+					Vector vec1, vec2;
+					// 指令格式
+					Format_Two(userCommand, vectors, Error, vec1, vec2);
+
+					if (Error == Correct) {
+						// 維度至少要一個一維
+						if (vec1.getDim() > 1 && vec2.getDim() > 1) {
+							Error = Dim_Error;
+						}
+						else {
+							Vector tmp = Scalar(vec1, vec2);
+
+							Output->Text += "-->" + Environment::NewLine;
+							for (int i = 0; i < tmp.getDim(); i++) {
+								Output->Text += tmp.Data[i].ToString();
+							}
+							Output->Text += Environment::NewLine;
+						}
+					}
+					else if (Error == E_Error) {
+						Error = SCA_Error;
+					}
+				}
+				else if (userCommand[0] == "Norm") {
+					Vector vec;
+					// 指令格式
+					Format_One(userCommand, vectors, Error, vec);
+
+					if (Error == Correct) {
+						double tmp = Norm(vec);
+
+						Output->Text += "-->" + Environment::NewLine + tmp.ToString() + "  " + Environment::NewLine;
+					}
+					else if (Error == E_Error) {
+						Error = NORM_Error;
+					}
+				}
+				else if (userCommand[0] == "Normal") {
+					/* Normal 只處理單一向量 */
+					Vector vec;
+					// 指令格式
+					Format_One(userCommand, vectors, Error, vec);
+
+					if (Error == Correct) {
+						Vector tmp = Normal(vec);
+
+						Output->Text += "-->" + Environment::NewLine;
+						for (int i = 0; i < tmp.getDim(); i++) {
+							Output->Text += tmp.Data[i].ToString() + "  ";
+						}
+						Output->Text += Environment::NewLine;
+					}
+					else if (Error == E_Error) {
+						Error = NML_Error;
+					}
+				}
+				else if (userCommand[0] == "Cross") {
+					Vector vec1, vec2;
+					// 指令格式
+					Format_Two(userCommand, vectors, Error, vec1, vec2);
+
+					if (Error == Correct) {
+						// 只處理三維
+						if (vec1.getDim() != 3 && vec2.getDim() != 3) {
+							Error = Dim_Error;
+						}
+						else {
+							Vector tmp = Cross(vec1, vec2);
+
+							/* 處理輸出 */
+							Output->Text += "-->" + Environment::NewLine;
+							for (int i = 0; i < tmp.getDim(); i++) {
+								Output->Text += tmp.Data[i].ToString() + "  ";
+							}
+							Output->Text += Environment::NewLine;
+						}
+					}
+					else if (Error == E_Error) {
+						Error = CRS_Error;
+					}
+				}
+				else if (userCommand[0] == "Com") {
+					Vector vec1, vec2;
+					// 指令格式
+					Format_Two(userCommand, vectors, Error, vec1, vec2);
+
+					if (Error == Correct) {
+						if (vec1.getDim() != vec2.getDim()) {
+							Error = Dim_Error;
+						}
+						else {
+							Vector tmp = Comp(vec1, vec2);
+
+							/* 處理輸出 */
+							Output->Text += "-->" + Environment::NewLine;
+							for (int i = 0; i < tmp.getDim(); i++) {
+								Output->Text += tmp.Data[i].ToString() + "  ";
+							}
+							Output->Text += Environment::NewLine;
+						}
+					}
+					else if (Error == E_Error) {
+						Error = COM_Error;
+					}
+				}
+				else if (userCommand[0] == "Proj") {
+					Vector vec1, vec2;
+					// 指令格式
+					Format_Two(userCommand, vectors, Error, vec1, vec2);
+
+					if (Error == Correct) {
+						if (vec1.getDim() != vec2.getDim()) {
+							Error = Dim_Error;
+						}
+						else {
+							Vector tmp = Proj(vec1, vec2);
+							/* 輸出處理 */
+							Output->Text += "-->" + Environment::NewLine;
+							for (int i = 0; i < tmp.getDim(); i++) {
+								Output->Text += tmp.Data[i].ToString() + "  ";
+							}
+							Output->Text += Environment::NewLine;
+						}
+					}
+					else if (Error == E_Error) {
+						Error = PRJ_Error;
+					}
+				}
+				else if (userCommand[0] == "Area") {
+					Vector vec1, vec2;
+					// 指令格式
+					Format_Two(userCommand, vectors, Error, vec1, vec2);
+
+					if (Error == Correct) {
+						if (vec1.getDim() != vec2.getDim()) {
+							Error = Dim_Error;
+						}
+						else {
+							double trigArea = TrigArea(vec1, vec2);
+
+							/* 處理輸出 */
+							Output->Text += "-->" + Environment::NewLine + trigArea.ToString() + Environment::NewLine;
+						}
+					}
+					else if (Error == E_Error) {
+						Error = AREA_Error;
+					}
+				}
+				else if (userCommand[0] == "IsPrl") {
+
+					Vector vec1, vec2;
+					// 指令格式
+					Format_Two(userCommand, vectors, Error, vec1, vec2);
+
+
+					if (Error == Correct) {
+						if (vec1.getDim() != vec2.getDim()) {
+							Error = Dim_Error;
+						}
+						else {
+							bool isPrl = IsParal(vec1, vec2);
+
+							std::string Ans = "";
+							if (isPrl) Ans = "Yes";
+							else Ans = "No";
+							Output->Text += "-->" + Environment::NewLine + gcnew String(Ans.c_str()) + Environment::NewLine;
+						}
+					}
+					else if (Error == E_Error) {
+						Error = IsPRL_Error;
+					}
+				}
+				else if (userCommand[0] == "IsOrtg") {
+					Vector vec1, vec2;
+					// 指令格式
+					Format_Two(userCommand, vectors, Error, vec1, vec2);
+
+					if (Error == Correct) {
+						if (vec1.getDim() != vec2.getDim()) {
+							Error = Dim_Error;
+						}
+						else {
+							bool isOrg = IsOrthog(vec1, vec2);
+
+							std::string Ans = "";
+							if (isOrg) Ans = "Yes";
+							else Ans = "No";
+							Output->Text += "-->" + Environment::NewLine + gcnew String(Ans.c_str()) + Environment::NewLine;
+						}
+					}
+					else if (Error == E_Error) {
+						Error = IsORTG_Error;
+					}
+				}
+				else if (userCommand[0] == "Angle") {
+					Vector vec1, vec2;
+					// 指令格式
+					Format_Two(userCommand, vectors, Error, vec1, vec2);
+
+					if (Error == Correct) {
+						if (vec1.getDim() != vec2.getDim()) {
+							Error = Dim_Error;
+						}
+						else {
+							double theta = Angle(vec1, vec2);
+
+							std::string Ans = "";
+							Output->Text += "-->" + Environment::NewLine + "theta = " + theta.ToString() + Environment::NewLine;
+						}
+					}
+					else if (Error == E_Error) {
+						Error = ANG_Error;
+					}
+				}
+				else if (userCommand[0] == "pN") {
+					// 此項讀取"pn" 和 "Cross"一樣 輸出product() 都是算外積
+
+					Vector vec1, vec2;
+					// 指令格式
+					Format_Two(userCommand, vectors, Error, vec1, vec2);
+
+					if (Error == Correct) {
+						// 只處理三維
+						if (vec1.getDim() != 3 && vec2.getDim() != 3) {
+							Error = Dim_Error;
+						}
+						else {
+							Vector tmp = Cross(vec1, vec2);
+
+							/* 處理輸出 */
+							Output->Text += "-->" + Environment::NewLine;
+							for (int i = 0; i < tmp.getDim(); i++) {
+								Output->Text += tmp.Data[i].ToString() + "  ";
+							}
+							Output->Text += Environment::NewLine;
+						}
+					}
+					else if (Error == E_Error) {
+						Error = PN_Error;
+					}
+				}
+				else if (userCommand[0] == "IsLI") {
+					// 支援多項量輸入
+					Output->Text += "- Function NOT Finish Yet -" + Environment::NewLine;
+				}
+				else if (userCommand[0] == "Ob") {
+					// 支援多項量輸入
+					std::vector<Vector>vecs;
+					Format_Muti(userCommand, vectors, Error, vecs);
+
+					if (Error == Correct) {
+						for (int i = 0; i < vecs.size() - 1; i++) {
+							if (vecs[i].getDim() != vecs[i + 1].getDim()) {
+								Error = Dim_Error;
+								break;
+							}
+						}
+						if (Error == Correct) {
+							std::vector<Vector> tmp = Ob(vecs);
+							/* 輸出處理 */
+							Output->Text += "-->" + Environment::NewLine + gcnew String("normal") + "  " + tmp.size().ToString() + Environment::NewLine;
+							for (unsigned int i = 0; i < tmp.size(); i++) {
+								for (unsigned int j = 0; j < tmp[i].getDim(); j++) {
+									Output->Text += tmp[i].Data[j].ToString() + "  ";
+								}
+								Output->Text += Environment::NewLine + Environment::NewLine;
+							}
+
+						}
+					}
+					else if (Error == E_Error) {
+						Error = OB_Error;
+					}
+
+				}
+				//反之則判斷找不到指令
+				else
+				{
+					Output->Text += "- Command not found -" + Environment::NewLine;
+				}
+				// 指令錯誤
+				if (Error == MVS_Error) {
+					Output->Text += "- Command MVS format ERROR -" + Environment::NewLine;
+				}
+				else if (Error == Dim_Error) {
+					Output->Text += "- Vector Dimesion Not the Same -" + Environment::NewLine;
+				}
+				else if (Error == SCA_Error) {
+					Output->Text += "- Command Scalar format ERROR -" + Environment::NewLine;
+				}
+				else if (Error == DOT_Error) {
+					Output->Text += "- Command Dot format ERROR -" + Environment::NewLine;
+				}
+				else if (Error == ADD_Error) {
+					Output->Text += "- Command Add format ERROR -" + Environment::NewLine;
+				}
+				else if (Error == NORM_Error) {
+					Output->Text += "- Command Norm format ERROR -" + Environment::NewLine;
+				}
+				else if (Error == NML_Error) {
+					Output->Text += "- Command Normal format ERROR -" + Environment::NewLine;
+				}
+				else if (Error == CRS_Error) {
+					Output->Text += "- Command Cross format ERROR -" + Environment::NewLine;
+				}
+				else if (Error == COM_Error) {
+					Output->Text += "- Command Com format ERROR -" + Environment::NewLine;
+				}
+				else if (Error == PRJ_Error) {
+					Output->Text += "- Command Proj format ERROR -" + Environment::NewLine;
+				}
+				else if (Error == AREA_Error) {
+					Output->Text += "- Command Area format ERROR -" + Environment::NewLine;
+				}
+				else if (Error == IsPRL_Error) {
+					Output->Text += "- Command IsPrl format ERROR -" + Environment::NewLine;
+				}
+				else if (Error == IsORTG_Error) {
+					Output->Text += "- Command IsOrtg format ERROR -" + Environment::NewLine;
+				}
+				else if (Error == ANG_Error) {
+					Output->Text += "- Command Angle format ERROR -" + Environment::NewLine;
+				}
+				else if (Error == PN_Error) {
+					Output->Text += "- Command pN format ERROR -" + Environment::NewLine;
+				}
+				else if (Error == IsLI_Error) {
+					Output->Text += "- Command IsLI format ERROR -" + Environment::NewLine;
+				}
+				else if (Error == OB_Error) {
+					Output->Text += "- Command Ob format ERROR -" + Environment::NewLine;
+				}
+				userInput = "";
+			}
+			// 如果有 Load Matrix
+			if (dataManager->HasMatrix()) {
 
 			}
-			//反之則判斷找不到指令
-			else
-			{
-				Output->Text += "- Command not found -" + Environment::NewLine;
-			}
-			// 指令錯誤
-			if (Error == MVS_Error) {
-				Output->Text += "- Command MVS format ERROR -" + Environment::NewLine;
-			}
-			else if (Error == Dim_Error) {
-				Output->Text += "- Vector Dimesion Not the Same -" + Environment::NewLine;
-			}
-			else if (Error == SCA_Error) {
-				Output->Text += "- Command Scalar format ERROR -" + Environment::NewLine;
-			}
-			else if (Error == DOT_Error) {
-				Output->Text += "- Command Dot format ERROR -" + Environment::NewLine;
-			}
-			else if (Error == ADD_Error) {
-				Output->Text += "- Command Add format ERROR -" + Environment::NewLine;
-			}
-			else if (Error == NORM_Error) {
-				Output->Text += "- Command Norm format ERROR -" + Environment::NewLine;
-			}
-			else if (Error == NML_Error) {
-				Output->Text += "- Command Normal format ERROR -" + Environment::NewLine;
-			}
-			else if (Error == CRS_Error) {
-				Output->Text += "- Command Cross format ERROR -" + Environment::NewLine;
-			}
-			else if (Error == COM_Error) {
-				Output->Text += "- Command Com format ERROR -" + Environment::NewLine;
-			}
-			else if (Error == PRJ_Error) {
-				Output->Text += "- Command Proj format ERROR -" + Environment::NewLine;
-			}
-			else if (Error == AREA_Error) {
-				Output->Text += "- Command Area format ERROR -" + Environment::NewLine;
-			}
-			else if (Error == IsPRL_Error) {
-				Output->Text += "- Command IsPrl format ERROR -" + Environment::NewLine;
-			}
-			else if (Error == IsORTG_Error) {
-				Output->Text += "- Command IsOrtg format ERROR -" + Environment::NewLine;
-			}
-			else if (Error == ANG_Error) {
-				Output->Text += "- Command Angle format ERROR -" + Environment::NewLine;
-			}
-			else if (Error == PN_Error) {
-				Output->Text += "- Command pN format ERROR -" + Environment::NewLine;
-			}
-			else if (Error == IsLI_Error) {
-				Output->Text += "- Command IsLI format ERROR -" + Environment::NewLine;
-			}
-			else if (Error == OB_Error) {
-				Output->Text += "- Command Ob format ERROR -" + Environment::NewLine;
-			}
-			userInput = "";
+
 		}
 		else
 		{
@@ -751,10 +761,6 @@ namespace EM_Project1 {
 		MarshalString(openFileDialog1->FileName, tempFileName);
 		//將檔案路徑名稱傳入dataManager
 		dataManager->SetFileName(tempFileName);
-
-		std::cout << tempFileName << '\n';
-		std::cout << tempFileName[tempFileName.size() - 6] << '\n';
-		std::cout << toupper(tempFileName.size() - 6) << '\n';
 
 		if (toupper(tempFileName[tempFileName.size()-6]) == 'V') {
 			openVectorDialog1_FileOk();
