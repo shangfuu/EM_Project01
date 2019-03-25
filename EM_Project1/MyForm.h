@@ -304,7 +304,7 @@ namespace EM_Project1 {
 			array<String^> ^userCommand = userInput->Split(' ');
 
 			/* 判斷錯誤指令 */
-			ERROR Error = Correct;
+			VECTOR_ERROR Error = Correct;
 
 			//字串比較，若指令為"print"的情況
 			if (userCommand[0] == "print")
