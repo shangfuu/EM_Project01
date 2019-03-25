@@ -174,7 +174,7 @@ std::vector<Vector> Ob(const std::vector<Vector>& x) {
 	return buff;
 }
 
-Vector MVS(array<System::String^> ^userCommand, std::vector<Vector> vectors, ERROR& Error)
+Vector MVS(array<System::String^> ^userCommand, std::vector<Vector> vectors, VECTOR_ERROR& Error)
 {
 	// postfix 用來存運算元
 	std::vector<std::string> stack;
@@ -301,7 +301,7 @@ Vector MVS(array<System::String^> ^userCommand, std::vector<Vector> vectors, ERR
 	return result[0];
 }
 
-void Format_Two(array<System::String^> ^userCommand, const std::vector<Vector> vectors, ERROR& Error, Vector& vec1, Vector& vec2) {
+void Format_Two(array<System::String^> ^userCommand, const std::vector<Vector> vectors, VECTOR_ERROR& Error, Vector& vec1, Vector& vec2) {
 
 	if (userCommand->Length >= 6 && userCommand[1] == "(" && userCommand[userCommand->Length - 1] == ")") {
 		Error = E_Error;
@@ -342,7 +342,7 @@ void Format_Two(array<System::String^> ^userCommand, const std::vector<Vector> v
 	}
 }
 
-void Format_One(array<System::String^> ^userCommand, const std::vector<Vector> vectors, ERROR& Error, Vector& vec) {
+void Format_One(array<System::String^> ^userCommand, const std::vector<Vector> vectors, VECTOR_ERROR& Error, Vector& vec) {
 
 	Error = E_Error;
 	if (userCommand->Length >= 4 && userCommand[1] == "(" && userCommand[userCommand->Length - 1] == ")") {
@@ -374,7 +374,7 @@ void Format_One(array<System::String^> ^userCommand, const std::vector<Vector> v
 	}
 }
 
-void Format_Muti(array<System::String^> ^userCommand, const std::vector<Vector> vectors, ERROR& Error, std::vector<Vector>& vecs)
+void Format_Muti(array<System::String^> ^userCommand, const std::vector<Vector> vectors, VECTOR_ERROR& Error, std::vector<Vector>& vecs)
 {
 	if (userCommand->Length >= 4 && userCommand[1] == "(" && userCommand[userCommand->Length - 1] == ")") {
 		Error = Correct;

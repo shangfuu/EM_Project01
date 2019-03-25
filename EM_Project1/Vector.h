@@ -47,10 +47,10 @@ public:
 	friend std::vector<Vector> Ob(const std::vector<Vector>&);		// Gram–Schmidt Orthogonalization Process
 
 	/* 處理格式 */
-	friend Vector MVS(array<System::String^> ^, std::vector<Vector>, ERROR&);
-	friend void Format_Two(array<System::String^> ^, const std::vector<Vector>,ERROR&,Vector&, Vector&);
-	friend void Format_One(array<System::String^> ^, const std::vector<Vector>, ERROR&, Vector&);
-	friend void Format_Muti(array<System::String^> ^, const std::vector<Vector>, ERROR&, std::vector<Vector>&);
+	friend Vector MVS(array<System::String^> ^, std::vector<Vector>, VECTOR_ERROR&);
+	friend void Format_Two(array<System::String^> ^, const std::vector<Vector>, VECTOR_ERROR&,Vector&, Vector&);
+	friend void Format_One(array<System::String^> ^, const std::vector<Vector>, VECTOR_ERROR&, Vector&);
+	friend void Format_Muti(array<System::String^> ^, const std::vector<Vector>, VECTOR_ERROR&, std::vector<Vector>&);
 };
 
 
