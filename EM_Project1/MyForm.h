@@ -297,7 +297,6 @@ namespace EM_Project1 {
 		//取得向量資料
 		std::vector<Vector> vectors = dataManager->GetVectors();
 
-
 		//判斷輸入自元為'\n'，並防止取到字串-1位置
 		if (Input->Text->Length - 1 >= 0 && Input->Text[Input->Text->Length - 1] == '\n')
 		{
@@ -752,6 +751,24 @@ namespace EM_Project1 {
 		MarshalString(openFileDialog1->FileName, tempFileName);
 		//將檔案路徑名稱傳入dataManager
 		dataManager->SetFileName(tempFileName);
+
+		std::cout << tempFileName << '\n';
+		std::cout << tempFileName[tempFileName.size() - 6] << '\n';
+		std::cout << toupper(tempFileName.size() - 6) << '\n';
+
+		if (toupper(tempFileName[tempFileName.size()-6]) == 'V') {
+			openVectorDialog1_FileOk();
+		}
+		else if (toupper(tempFileName[tempFileName.size() - 6]) == 'M'){
+			openMatrixDialog1_FileOk();
+		}
+		else {
+			Output->Text += "- File Name Error -" + Environment::NewLine;
+		}
+
+	}
+	private: System::Void openVectorDialog1_FileOk() {
+
 		//從讀取讀取向量資料
 		if (dataManager->LoadVectorData())
 		{
@@ -783,5 +800,38 @@ namespace EM_Project1 {
 
 		}
 	}
-	};
+	private: System::Void openMatrixDialog1_FileOk() {
+		//從讀取讀取向量資料
+		if (dataManager->LoadMatrixData())
+		{
+			//將VectorList中項目先做清除
+			VectorList->Items->Clear();
+			//取得所有向量資料
+			std::vector<Matrix> matrices = dataManager->GetMatrices();
+
+			for (unsigned int i = 0; i < matrices.size(); i++)
+			{
+				//將檔案名稱存入暫存
+				std::string tempString = matrices[i].Name;
+				//將輸出格式存入暫存
+				tempString += " [";
+				//將輸出資料存入暫存
+				for (unsigned int r = 0; r < matrices[i].Data.size(); r++)
+				{
+					for (unsigned int c = 0; c < matrices[i].Data[r].size(); c++) {
+						std::string scalarString = std::to_string(matrices[i].Data[r][c]);
+						tempString += scalarString.substr(0, scalarString.size() - 5);
+					}
+					if (r != matrices[i].Data[r].size() - 1)
+						tempString += ",";
+				}
+				//將輸出格式存入暫存
+				tempString += "]";
+				//將項目加入VectorList中
+				VectorList->Items->Add(gcnew String(tempString.c_str()));
+			}
+			Output->Text += "-Matrix datas have been loaded-" + Environment::NewLine;
+		}
+	}
+};
 }
