@@ -6,6 +6,11 @@
 #include<string>
 #define PI 3.14159265358979323846
 
+/***Error Type***/
+enum MATRIX_ERROR {
+
+};
+
 //©w¸q Matrix
 class Matrix
 {	
