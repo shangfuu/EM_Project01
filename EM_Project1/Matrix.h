@@ -4,6 +4,7 @@
 #include<iostream>
 #include<fstream>
 #include<string>
+#include "Vector.h"
 #define PI 3.14159265358979323846
 
 /***Error Type***/
@@ -16,6 +17,6 @@ class Matrix
 {	
 public:
 	std::string Name;
-	std::vector<std::vector<double>> Data;
+	std::vector<Vector> Data;
 	Matrix();
 };

@@ -116,8 +116,8 @@ bool DataManager::LoadMatrixData()
 		int rows = 0, cols = 0;
 		int currentLoadMatrixID = 0;
 		//定義向量資料暫存變數
-		std::vector<double> MatrixCols;
-		std::vector<std::vector<double>> MatrixRows;
+		Vector MatrixCols;
+		std::vector<Vector> MatrixRows;
 		//定義讀取檔案字串暫存變數
 		std::string tempString = "";
 		//從檔案讀取字串，解析掉向量總數
@@ -166,14 +166,14 @@ bool DataManager::LoadMatrixData()
 						double value;
 						value = (double)strtod(tempString.c_str(), NULL);
 						//將向量資料存入暫存
-						MatrixCols.push_back(value);
+						MatrixCols.Data.push_back(value);
 						if (i == (rows - 1) && j == (cols - 1))
 							int o;
 						else
 							fin >> tempString;
 					}
 					MatrixRows.push_back(MatrixCols);
-					MatrixCols.clear();
+					MatrixCols.Data.clear();
 				}
 			}
 			tempString = "";

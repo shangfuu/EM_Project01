@@ -824,10 +824,10 @@ namespace EM_Project1 {
 				//將輸出資料存入暫存
 				for (unsigned int r = 0; r < matrices[i].Data.size(); r++)
 				{
-					for (unsigned int c = 0; c < matrices[i].Data[r].size(); c++) {
-						std::string scalarString = std::to_string(matrices[i].Data[r][c]);
+					for (unsigned int c = 0; c < matrices[i].Data[r].getDim(); c++) {
+						std::string scalarString = std::to_string(matrices[i].Data[r].Data[c]);
 						tempString += scalarString.substr(0, scalarString.size() - 5);
-						if (c != matrices[i].Data[r].size() - 1)
+						if (r != matrices[i].Data.size() -1 || c != matrices[i].Data[r].getDim() - 1)
 						tempString += ",";  
 					}
 				}
