@@ -827,9 +827,9 @@ namespace EM_Project1 {
 					for (unsigned int c = 0; c < matrices[i].Data[r].size(); c++) {
 						std::string scalarString = std::to_string(matrices[i].Data[r][c]);
 						tempString += scalarString.substr(0, scalarString.size() - 5);
+						if (c != matrices[i].Data[r].size() - 1)
+						tempString += ",";  
 					}
-					if (r != matrices[i].Data[r].size() - 1)
-						tempString += ",";
 				}
 				//將輸出格式存入暫存
 				tempString += "]";
