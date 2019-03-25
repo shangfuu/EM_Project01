@@ -296,6 +296,7 @@ namespace EM_Project1 {
 		//當Input textbox中的輸入改變時，便會進入此函式
 		//取得向量資料
 		std::vector<Vector> vectors = dataManager->GetVectors();
+		std::vector<Matrix> matrices = dataManager->GetMatrices();
 
 		//判斷輸入自元為'\n'，並防止取到字串-1位置
 		if (Input->Text->Length - 1 >= 0 && Input->Text[Input->Text->Length - 1] == '\n')
@@ -740,7 +741,39 @@ namespace EM_Project1 {
 			}
 			// 如果有 Load Matrix
 			if (dataManager->HasMatrix()) {
-
+				if (userCommand[0] == "print") {
+					//定意輸出暫存
+					String^ outputTemp = "";
+					//透過for迴圈，從向量資料中找出對應變數
+					for (unsigned int i = 0; i < matrices.size(); i++)
+					{
+						//若變數名稱與指令變數名稱符合
+						if (userCommand[1] == gcnew String(matrices[i].Name.c_str()))
+						{
+							//將輸出格式存入暫存
+							outputTemp += "[";
+							//將輸出資料存入暫存
+							for (unsigned int r = 0; r < matrices[i].Data.size(); r++)
+							{
+								for (unsigned int c = 0; c < matrices[i].Data[r].getDim(); c++) {
+									outputTemp += matrices[i].Data[r].Data[c].ToString();
+									if (c != matrices[i].Data[r].getDim() - 1)
+										outputTemp += ",";
+								}
+								if(r != matrices[i].Data.size() -1)
+								outputTemp += Environment::NewLine;
+							}
+							//將輸出格式存入暫存，並且換行
+							outputTemp += "]" + Environment::NewLine;
+							//輸出暫存資訊
+							Output->Text += gcnew String(matrices[i].Name.c_str()) + " = " + Environment::NewLine + outputTemp;
+							break;
+						}
+					}
+				}
+				else {
+					Output->Text += "- Command not found -" + Environment::NewLine;
+				}
 			}
 
 		}
