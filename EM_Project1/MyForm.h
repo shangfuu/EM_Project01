@@ -367,7 +367,7 @@ namespace EM_Project1 {
 							/* 輸出處理 */
 							Output->Text += "-->" + Environment::NewLine;
 							for (int i = 0; i < tmp.getDim(); i++) {
-								Output->Text += "  " + tmp.Data[i].ToString();
+								Output->Text += tmp.Data[i].ToString() + "  ";
 							}
 							Output->Text += Environment::NewLine;
 						}
@@ -393,7 +393,7 @@ namespace EM_Project1 {
 							/* 輸出處理 */
 							Output->Text += "-->" + Environment::NewLine;
 							for (int i = 0; i < tmp.getDim(); i++) {
-								Output->Text += "  " + tmp.Data[i].ToString();
+								Output->Text += tmp.Data[i].ToString() + "  ";
 							}
 							Output->Text += Environment::NewLine;
 						}
@@ -409,6 +409,10 @@ namespace EM_Project1 {
 					// 指令格式
 					Format_Two(userCommand, vectors, Error, vec1, vec2);
 
+					// 判斷零向量
+					if (Norm(vec1)) vec1.Data.resize(1);
+					if (Norm(vec2))	vec2.Data.resize(1);
+
 					if (Error == Correct) {
 						// 維度至少要一個一維
 						if (vec1.getDim() > 1 && vec2.getDim() > 1) {
@@ -419,7 +423,7 @@ namespace EM_Project1 {
 
 							Output->Text += "-->" + Environment::NewLine;
 							for (int i = 0; i < tmp.getDim(); i++) {
-								Output->Text += tmp.Data[i].ToString();
+								Output->Text += tmp.Data[i].ToString() + "  ";
 							}
 							Output->Text += Environment::NewLine;
 						}
@@ -795,10 +799,10 @@ namespace EM_Project1 {
 		//將檔案路徑名稱傳入dataManager
 		dataManager->SetFileName(tempFileName);
 
-		if (toupper(tempFileName[tempFileName.size()-6]) == 'V') {
+		if (this->VectorLabel->Text == L"Vector") {
 			openVectorDialog1_FileOk();
 		}
-		else if (toupper(tempFileName[tempFileName.size() - 6]) == 'M'){
+		else if (this->VectorLabel->Text == L"Matrix"){
 			openMatrixDialog1_FileOk();
 		}
 		else {
@@ -815,6 +819,7 @@ namespace EM_Project1 {
 			VectorList->Items->Clear();
 			//取得所有向量資料
 			std::vector<Vector> vectors = dataManager->GetVectors();
+			//清除Matrix資料
 
 			for (unsigned int i = 0; i < vectors.size(); i++)
 			{

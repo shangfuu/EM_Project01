@@ -61,7 +61,7 @@ double Norm(const Vector& x) {
 
 Vector Normal(const Vector& x) {
 	Vector buff;
-	buff.Name = "Normal (" + x.Name + ")";
+	buff.Name = "Normal";
 	for (int i = 0; i < x.getDim(); i++) {
 		buff.Data.push_back(x.Data[i] / Norm(x));
 	}
@@ -224,7 +224,7 @@ Vector MVS(array<System::String^> ^userCommand, std::vector<Vector> vectors, VEC
 		}
 	}
 
-	// 兩變數或以上不能沒有運算元
+	// 兩變數以上不能沒有運算元
 	if (postfix.size() > 1 && stack.size() == 0) {
 		Error = MVS_Error;
 	}
@@ -242,6 +242,9 @@ Vector MVS(array<System::String^> ^userCommand, std::vector<Vector> vectors, VEC
 
 	// 沒有錯誤才運算
 	if (Error == Correct) {
+
+		// 有無0向量
+		bool hasZero = false;
 
 		// Calculate
 		for (unsigned int i = 0; i < postfix.size(); i++) {
@@ -267,7 +270,7 @@ Vector MVS(array<System::String^> ^userCommand, std::vector<Vector> vectors, VEC
 			}
 			else if (postfix[i] == "*") {
 
-				// 一向量為 一維執行 Scalar
+				// 一向量為一維 執行 Scalar
 				if (result[top - 2].getDim() == 1 || result[top - 1].getDim() == 1) {
 					result[top - 2] = Scalar(result[top - 1], result[top - 2]);
 				}
@@ -287,6 +290,25 @@ Vector MVS(array<System::String^> ^userCommand, std::vector<Vector> vectors, VEC
 				for (unsigned int j = 0; j < vectors.size(); j++) {
 					if (postfix[i] == vectors[j].Name) {
 						result.push_back(vectors[j]);
+						// 判斷零向量
+						if (Norm(vectors[j]) == 0) {
+							hasZero = true;
+							result.back().Name = "Zero";
+						}
+					}
+				}
+			}
+			if (hasZero && result.size() == 2) {
+				if (result[1].Name == "Zero") {
+					result[1].Data.resize(result[0].getDim());
+					for (int i = 0; i < result[1].getDim(); i++) {
+						result[1].Data[i] = 0;
+					}
+				}
+				else {
+					result[0].Data.resize(result[1].getDim());
+					for (int i = 0; i < result[0].getDim(); i++) {
+						result[0].Data[i] = 0;
 					}
 				}
 			}
@@ -331,6 +353,20 @@ void Format_Two(array<System::String^> ^userCommand, const std::vector<Vector> v
 			Cmd2 = tmpString->Split(' ');
 			vec1 = MVS(Cmd1, vectors, Error);
 			vec2 = MVS(Cmd2, vectors, Error);
+			// 判斷零向量
+			if (Norm(vec1) == 0) {
+				vec1.Data.resize(vec2.getDim());
+				for (int i = 0; i < vec1.getDim(); i++) {
+					vec1.Data[i] = 0;
+				}
+			}
+			if (Norm(vec2) == 0) {
+				vec2.Data.resize(vec1.getDim());
+				for (int i = 0; i < vec1.getDim(); i++) {
+					vec2.Data[i] = 0;
+				}
+			}
+
 			// 少指令
 			if (Error != Dim_Error && (vec1.getDim() == 0 || vec2.getDim() == 0)) {
 				Error = E_Error;
