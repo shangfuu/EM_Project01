@@ -309,7 +309,7 @@ namespace EM_Project1 {
 			
 			
 			// 如果有 Load Vector
-			if (dataManager->HasVector()) {
+			if (dataManager->HasVector() && this->VectorLabel->Text == L"Vector") {
 
 				//字串比較，若指令為"print"的情況
 				if (userCommand[0] == "print")
@@ -744,7 +744,7 @@ namespace EM_Project1 {
 				userInput = "";
 			}
 			// 如果有 Load Matrix
-			if (dataManager->HasMatrix()) {
+			if (dataManager->HasMatrix() && this->VectorLabel->Text == L"Matrix") {
 				if (userCommand[0] == "print") {
 					//定意輸出暫存
 					String^ outputTemp = "";
@@ -819,7 +819,6 @@ namespace EM_Project1 {
 			VectorList->Items->Clear();
 			//取得所有向量資料
 			std::vector<Vector> vectors = dataManager->GetVectors();
-			//清除Matrix資料
 
 			for (unsigned int i = 0; i < vectors.size(); i++)
 			{
@@ -841,7 +840,6 @@ namespace EM_Project1 {
 				VectorList->Items->Add(gcnew String(tempString.c_str()));
 			}
 			Output->Text += "-Vector datas have been loaded-" + Environment::NewLine;
-
 		}
 	}
 	private: System::Void openMatrixDialog1_FileOk() {
