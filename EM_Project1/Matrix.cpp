@@ -4,6 +4,31 @@ Matrix::Matrix()
 {
 }
 
+void Matrix::print(System::Windows::Forms::TextBox^ Output)
+{
+	//定意輸出暫存
+	System::String^ outputTemp = "";
+
+	outputTemp += "[";
+	//將輸出資料存入暫存
+	for (unsigned int r = 0; r < this->getRow(); r++)
+	{
+		for (unsigned int c = 0; c < this->getCol(); c++) {
+			outputTemp += this->Data[r].Data[c].ToString();
+			if (c != this->Data[r].getDim() - 1)
+				outputTemp += ",";
+		}
+		if (r != this->Data.size() - 1)
+			outputTemp += System::Environment::NewLine;
+	}
+	//將輸出格式存入暫存，並且換行
+	outputTemp += "]" + System::Environment::NewLine;
+	//輸出暫存資訊
+	Output->Text += gcnew System::String(this->Name.c_str()) + " = " + System::Environment::NewLine + outputTemp;
+
+
+}
+
 Matrix operator+(const Matrix& m1, const Matrix& m2)
 {
 	Matrix mat;
@@ -31,7 +56,12 @@ Matrix operator*(const Matrix & m1, const Matrix & m2)
 	return mat;
 }
 
-Matrix Multi_Matrix_Op(array<System::String^> ^userCommand,const std::vector<Matrix>matrices, MATRIX_ERROR& Error)
+int Rank(const Matrix & m)
+{
+	return 1;
+}
+
+Matrix Multi_Matrix_Op(array<System::String^> ^userCommand, const std::vector<Matrix>matrices, MATRIX_ERROR& Error)
 {
 	// postfix 用來存運算元
 	std::vector<std::string> stack;
@@ -86,7 +116,7 @@ Matrix Multi_Matrix_Op(array<System::String^> ^userCommand,const std::vector<Mat
 		Error = MMO_Error;
 	}
 	else {
-		while (stack.size() > 0 && Error == Correct) {
+		while (stack.size() > 0 && Error == M_Correct) {
 			if (stack.back() == "(") {
 				Error = MMO_Error;
 				break;
@@ -98,7 +128,7 @@ Matrix Multi_Matrix_Op(array<System::String^> ^userCommand,const std::vector<Mat
 	if (postfix.size() == 0) Error = MMO_Error;
 
 	// 沒有錯誤才運算
-	if (Error == Correct) {
+	if (Error == M_Correct) {
 
 		// 有無0矩陣
 		bool hasZero = false;
@@ -108,8 +138,8 @@ Matrix Multi_Matrix_Op(array<System::String^> ^userCommand,const std::vector<Mat
 			int top = result.size();
 
 			if (postfix[i] == "+") {
-				// Dim 一樣才運算
-				if (result[top - 2].getRow() != result[top - 1].getRow() || result[top-2].getCol() != result[top-1].getCol()) {
+				// RC 一樣才運算
+				if (result[top - 2].getRow() != result[top - 1].getRow() || result[top - 2].getCol() != result[top - 1].getCol()) {
 					Error = RC_Error;
 					break;
 				}
@@ -117,7 +147,7 @@ Matrix Multi_Matrix_Op(array<System::String^> ^userCommand,const std::vector<Mat
 				result.pop_back();
 			}
 			else if (postfix[i] == "-") {
-				// Dim 一樣才運算
+				// RC 一樣才運算
 				if (result[top - 2].getRow() != result[top - 1].getRow() || result[top - 2].getCol() != result[top - 1].getCol()) {
 					Error = RC_Error;
 					break;
@@ -127,7 +157,7 @@ Matrix Multi_Matrix_Op(array<System::String^> ^userCommand,const std::vector<Mat
 			}
 			else if (postfix[i] == "*") {
 
-				// 不同維度
+				// 不同RC
 				if (result[top - 2].getCol() != result[top - 1].getRow()) {
 					Error = RC_Error;
 					break;
@@ -175,18 +205,16 @@ Matrix Multi_Matrix_Op(array<System::String^> ^userCommand,const std::vector<Mat
 			}
 		}
 	}
-	else {
+	if (Error != M_Correct) {
 		Matrix err;
 		err.Name = "Err";
+		result.resize(0);
 		result.push_back(err);
 	}
 
 	return result[0];
 }
 
-int Rank(const Matrix &)
-{
-	return 0;
-}
+
 
 

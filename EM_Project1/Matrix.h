@@ -9,7 +9,7 @@
 
 /***Error Type***/
 enum MATRIX_ERROR {
-	Right = 0, MMO_Error, RC_Error
+	M_Correct = 0, MMO_Error, RC_Error
 };
 
 //©w¸q Matrix
@@ -27,7 +27,7 @@ public:
 	int getCol() const {		// Get Matrix Columns
 		return Data[0].getDim();
 	}
-	
+	void print(System::Windows::Forms::TextBox^ );		// print Matrix 
 	
 	/* Operator Overloading */
 	friend Matrix operator+(const Matrix&, const Matrix&);

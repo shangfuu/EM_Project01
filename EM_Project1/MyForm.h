@@ -305,6 +305,7 @@ namespace EM_Project1 {
 			array<String^> ^userCommand = userInput->Split(' ');
 			/* 判斷錯誤指令 */
 			VECTOR_ERROR Error = Correct;
+			MATRIX_ERROR M_Error = M_Correct;
 			
 			// 如果有 Load Vector
 			if (dataManager->HasVector() && this->VectorLabel->Text == L"Vector") {
@@ -746,38 +747,48 @@ namespace EM_Project1 {
 				if (userCommand[0] == "print") {
 					//定意輸出暫存
 					String^ outputTemp = "";
+					bool isIn = false;
 					//透過for迴圈，從向量資料中找出對應變數
 					for (unsigned int i = 0; i < matrices.size(); i++)
 					{
 						//若變數名稱與指令變數名稱符合
-						if (userCommand[1] == gcnew String(matrices[i].Name.c_str()))
+						if (userCommand->Length > 1 && userCommand[1] == gcnew String(matrices[i].Name.c_str()))
 						{
-							//將輸出格式存入暫存
-							outputTemp += "[";
-							//將輸出資料存入暫存
-							for (unsigned int r = 0; r < matrices[i].Data.size(); r++)
-							{
-								for (unsigned int c = 0; c < matrices[i].Data[r].getDim(); c++) {
-									outputTemp += matrices[i].Data[r].Data[c].ToString();
-									if (c != matrices[i].Data[r].getDim() - 1)
-										outputTemp += ",";
-								}
-								if(r != matrices[i].Data.size() -1)
-								outputTemp += Environment::NewLine;
-							}
-							//將輸出格式存入暫存，並且換行
-							outputTemp += "]" + Environment::NewLine;
-							//輸出暫存資訊
-							Output->Text += gcnew String(matrices[i].Name.c_str()) + " = " + Environment::NewLine + outputTemp;
+							////將輸出格式存入暫存
+							//outputTemp += "[";
+							////將輸出資料存入暫存
+							//for (unsigned int r = 0; r < matrices[i].Data.size(); r++)
+							//{
+							//	for (unsigned int c = 0; c < matrices[i].Data[r].getDim(); c++) {
+							//		outputTemp += matrices[i].Data[r].Data[c].ToString();
+							//		if (c != matrices[i].Data[r].getDim() - 1)
+							//			outputTemp += ",";
+							//	}
+							//	if(r != matrices[i].Data.size() -1)
+							//	outputTemp += Environment::NewLine;
+							//}
+							////將輸出格式存入暫存，並且換行
+							//outputTemp += "]" + Environment::NewLine;
+							////輸出暫存資訊
+							//Output->Text += gcnew String(matrices[i].Name.c_str()) + " = " + Environment::NewLine + outputTemp;
+							isIn = true;
+							Matrix mat = matrices[i];
+							mat.print(Output);
 							break;
 						}
 					}
+					if (!isIn)	Output->Text +=  "- Variable Name Not Found" + Environment::NewLine;
+				}
+				else if (userCommand[0] == "MMO") {
+					Matrix mat = Multi_Matrix_Op(userCommand,matrices,M_Error);
+					if(!M_Error)
+						mat.print(Output);
 				}
 				else if (userCommand[0] == "Add") {
 					Matrix mat;
 //					mat = Multi_Matrix_Op(userCommand,matrices);
 				}
-				else if (userCommand[0] == "sub") {
+				else if (userCommand[0] == "Sub") {
 
 				}
 				else {
