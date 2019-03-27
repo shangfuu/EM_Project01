@@ -9,7 +9,7 @@
 
 /***Error Type***/
 enum MATRIX_ERROR {
-	Correct = 0, MMO_Error, Dim_Error
+	Right = 0, MMO_Error, RC_Error
 };
 
 //©w¸q Matrix

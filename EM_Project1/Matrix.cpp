@@ -110,7 +110,7 @@ Matrix Multi_Matrix_Op(array<System::String^> ^userCommand,const std::vector<Mat
 			if (postfix[i] == "+") {
 				// Dim 一樣才運算
 				if (result[top - 2].getRow() != result[top - 1].getRow() || result[top-2].getCol() != result[top-1].getCol()) {
-					Error = Dim_Error;
+					Error = RC_Error;
 					break;
 				}
 				result[top - 2] = result[top - 2] + result[top - 1];
@@ -119,7 +119,7 @@ Matrix Multi_Matrix_Op(array<System::String^> ^userCommand,const std::vector<Mat
 			else if (postfix[i] == "-") {
 				// Dim 一樣才運算
 				if (result[top - 2].getRow() != result[top - 1].getRow() || result[top - 2].getCol() != result[top - 1].getCol()) {
-					Error = Dim_Error;
+					Error = RC_Error;
 					break;
 				}
 				result[top - 2] = result[top - 2] - result[top - 1];
@@ -129,7 +129,7 @@ Matrix Multi_Matrix_Op(array<System::String^> ^userCommand,const std::vector<Mat
 
 				// 不同維度
 				if (result[top - 2].getCol() != result[top - 1].getRow()) {
-					Error = Dim_Error;
+					Error = RC_Error;
 					break;
 				}
 				// Multi
@@ -182,6 +182,11 @@ Matrix Multi_Matrix_Op(array<System::String^> ^userCommand,const std::vector<Mat
 	}
 
 	return result[0];
+}
+
+int Rank(const Matrix &)
+{
+	return 0;
 }
 
 

@@ -775,7 +775,7 @@ namespace EM_Project1 {
 				}
 				else if (userCommand[0] == "Add") {
 					Matrix mat;
-					mat = Multi_Matrix_Op(userCommand,matrices);
+//					mat = Multi_Matrix_Op(userCommand,matrices);
 				}
 				else if (userCommand[0] == "sub") {
 
