@@ -303,10 +303,8 @@ namespace EM_Project1 {
 		{
 			//將使用者輸入字串(在userInput中)，依空白作切割
 			array<String^> ^userCommand = userInput->Split(' ');
-
 			/* 判斷錯誤指令 */
 			VECTOR_ERROR Error = Correct;
-			
 			
 			// 如果有 Load Vector
 			if (dataManager->HasVector() && this->VectorLabel->Text == L"Vector") {
@@ -774,6 +772,13 @@ namespace EM_Project1 {
 							break;
 						}
 					}
+				}
+				else if (userCommand[0] == "Add") {
+					Matrix mat;
+					mat = Multi_Matrix_Op(userCommand,matrices);
+				}
+				else if (userCommand[0] == "sub") {
+
 				}
 				else {
 					Output->Text += "- Command not found -" + Environment::NewLine;

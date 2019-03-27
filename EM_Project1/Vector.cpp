@@ -270,6 +270,10 @@ Vector MVS(array<System::String^> ^userCommand, std::vector<Vector> vectors, VEC
 			}
 			else if (postfix[i] == "*") {
 
+				// 判斷零向量
+				if (result[0].Name == "OneZero") 	result[0].Data.resize(1);
+				if (result[1].Name == "OneZero")	result[1].Data.resize(1);
+
 				// 一向量為一維 執行 Scalar
 				if (result[top - 2].getDim() == 1 || result[top - 1].getDim() == 1) {
 					result[top - 2] = Scalar(result[top - 1], result[top - 2]);
@@ -293,13 +297,15 @@ Vector MVS(array<System::String^> ^userCommand, std::vector<Vector> vectors, VEC
 						// 判斷零向量
 						if (Norm(vectors[j]) == 0) {
 							hasZero = true;
-							result.back().Name = "Zero";
+							if (vectors[j].getDim() == 1) result.back().Name = "OneZero";
+							else result.back().Name = "Zero";
 						}
 					}
 				}
 			}
+			// 處理零向量
 			if (hasZero && result.size() == 2) {
-				if (result[1].Name == "Zero") {
+				if (result[1].Name == "Zero" || result[1].Name == "OneZero") {
 					result[1].Data.resize(result[0].getDim());
 					for (int i = 0; i < result[1].getDim(); i++) {
 						result[1].Data[i] = 0;

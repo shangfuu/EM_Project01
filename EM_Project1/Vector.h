@@ -53,5 +53,3 @@ public:
 	friend void Format_Muti(array<System::String^> ^, const std::vector<Vector>, VECTOR_ERROR&, std::vector<Vector>&);
 };
 
-
-
