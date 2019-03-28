@@ -50,13 +50,19 @@ Matrix operator-(const Matrix & m1, const Matrix & m2)
 Matrix operator*(const Matrix & m1, const Matrix & m2)
 {
 	Matrix mat;
-	if (m1.getCol() == m2.getRow()) {
-
+	mat.Data.resize(m1.getRow());
+	for (int i = 0; i < m1.getRow(); i++) {
+		mat.Data[i].Data.resize(m2.getCol());
+		for (int j = 0; j < m2.getCol(); j++) {
+			for (int k = 0; k < m1.getCol(); k++) {
+				mat.Data[i].Data[j] += m1.Data[i].Data[k] * m2.Data[k].Data[j];
+			}
+		}
 	}
 	return mat;
 }
 
-int Rank(const Matrix & m)
+int Matrix::Rank() const
 {
 	return 1;
 }
@@ -174,7 +180,7 @@ Matrix Multi_Matrix_Op(array<System::String^> ^userCommand, const std::vector<Ma
 					if (postfix[i] == matrices[j].Name) {
 						result.push_back(matrices[j]);
 						// §PÂ_¹s¯x°}
-						if (Rank(matrices[j]) == 0) {
+						if (matrices[j].Rank() == 0) {
 							hasZero = true;
 							result.back().Name = "Zero";
 						}
@@ -182,7 +188,7 @@ Matrix Multi_Matrix_Op(array<System::String^> ^userCommand, const std::vector<Ma
 				}
 			}
 
-			// ³B²z¹s¦V¶q
+			// ³B²z¹s¯x°}
 			if (hasZero && result.size() == 2) {
 				if (result[1].Name == "Zero") {
 					result[1].Data.resize(result[0].getRow());
@@ -215,6 +221,95 @@ Matrix Multi_Matrix_Op(array<System::String^> ^userCommand, const std::vector<Ma
 	return result[0];
 }
 
+void Format_One(array<System::String^> ^userCommand, const std::vector<Matrix> matrices, MATRIX_ERROR& Error, Matrix& mat) {
 
+	Error = M_ERROR;
+	if (userCommand->Length >= 4 && userCommand[1] == "(" && userCommand[userCommand->Length - 1] == ")") {
 
+		int commas = 0;
+		System::String^ tmpString = "";
+		array<System::String^> ^Cmd;
 
+		for (int i = 1; i < userCommand->Length - 1; i++) {
+			if (userCommand[i] == ",") {
+				Error = M_ERROR;
+				break;
+			}
+			if (tmpString->Length == 0) {
+				Error = M_Correct;
+				tmpString += userCommand[i];
+			}
+			else {
+				tmpString += " " + userCommand[i];
+			}
+		}
+		if (!Error) {
+			Cmd = tmpString->Split(' ');
+			mat = Multi_Matrix_Op(Cmd, matrices, Error);
+			if (mat.getRow() == 0 && Error != RC_Error) {
+				Error = M_ERROR;
+			}
+		}
+	}
+}
+
+void Format_Two(array<System::String^> ^userCommand, const std::vector<Matrix> matrices, MATRIX_ERROR& Error, Matrix& mat1, Matrix& mat2) {
+
+	if (userCommand->Length >= 6 && userCommand[1] == "(" && userCommand[userCommand->Length - 1] == ")") {
+		Error = M_ERROR;
+		System::String^ tmpString = "";
+		array<System::String^> ^ Cmd1, ^ Cmd2;
+		int commas = 0;
+
+		for (int i = 1; i < userCommand->Length - 1; i++) {
+			if (userCommand[i] == ",") {
+				commas++;
+				Error = M_Correct;
+				Cmd1 = tmpString->Split(' ');
+				tmpString = "";
+			}
+			if (commas > 1) {
+				Error = M_ERROR;
+				break;
+			}
+			if (tmpString->Length == 0) {
+				tmpString += userCommand[i];
+			}
+			else {
+				tmpString += " " + userCommand[i];
+			}
+		}
+		if (!Error) {
+			Cmd2 = tmpString->Split(' ');
+			mat1 = Multi_Matrix_Op(Cmd1, matrices, Error);
+			mat2 = Multi_Matrix_Op(Cmd2, matrices, Error);
+			// §PÂ_¹s¯x°}
+			if (mat1.Rank() == 0) {
+				mat1.Data.resize(mat2.getRow());
+				for (int i = 0; i < mat2.getRow(); i++) {
+					mat1.Data[i].Data.resize(mat2.Data[i].getDim());
+					for (int j = 0; j < mat2.Data[i].getDim(); j++) {
+						mat1.Data[i].Data[j] = 0;
+					}
+				}
+			}
+			if (mat2.Rank() == 0) {
+				mat2.Data.resize(mat1.getRow());
+				for (int i = 0; i < mat1.getRow(); i++) {
+					mat2.Data[i].Data.resize(mat1.Data[i].getDim());
+					for (int j = 0; j < mat1.Data[i].getDim(); j++) {
+						mat2.Data[i].Data[j] = 0;
+					}
+				}
+			}
+
+			// ¤Ö«ü¥O
+			if (Error != RC_Error && (mat1.getRow() == 0 || mat2.getRow() == 0)) {
+				Error = M_ERROR;
+			}
+		}
+	}
+	else {
+		Error = M_ERROR;
+	}
+}

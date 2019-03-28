@@ -785,8 +785,18 @@ namespace EM_Project1 {
 						mat.print(Output);
 				}
 				else if (userCommand[0] == "Add") {
-					Matrix mat;
-//					mat = Multi_Matrix_Op(userCommand,matrices);
+					Matrix mat1, mat2;
+					Format_Two(userCommand, matrices, M_Error, mat1, mat2);
+					if (!M_Error) {
+						if (mat1.getRow() != mat2.getRow() || mat1.getCol() != mat2.getCol()) {
+							M_Error = RC_Error;
+						}
+						else {
+							Matrix tmp = mat1 + mat2;
+							tmp.Name = mat1.Name + " + " + mat2.Name;
+							tmp.print(Output);
+						}
+					}
 				}
 				else if (userCommand[0] == "Sub") {
 
@@ -794,6 +804,7 @@ namespace EM_Project1 {
 				else {
 					Output->Text += "- Command not found -" + Environment::NewLine;
 				}
+
 			}
 
 		}

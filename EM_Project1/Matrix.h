@@ -9,7 +9,7 @@
 
 /***Error Type***/
 enum MATRIX_ERROR {
-	M_Correct = 0, MMO_Error, RC_Error
+	M_Correct = 0, M_ERROR, MMO_Error, RC_Error
 };
 
 //定義 Matrix
@@ -18,15 +18,18 @@ class Matrix
 public:
 	Matrix();
 
+
 	std::string Name;
 	std::vector<Vector> Data;	// Row Vector
 
 	int getRow() const {		// Get Matrix Rows
 		return Data.size();
-	};
+	}
+
 	int getCol() const {		// Get Matrix Columns
 		return Data[0].getDim();
 	}
+
 	void print(System::Windows::Forms::TextBox^ );		// print Matrix 
 	
 	/* Operator Overloading */
@@ -36,11 +39,22 @@ public:
 
 	/* Method */
 	friend Matrix Multi_Matrix_Op(array<System::String^> ^,const std::vector<Matrix>,MATRIX_ERROR&);	//多矩陣運算
-	friend int Rank(const Matrix&);		// nonZero rows
-	Matrix Transpose();
-	Matrix Inverse();
-	
+	int Rank() const;		// nonZero rows
+
+	friend Matrix Transpose(const Matrix&);
+	friend  Matrix Inverse(const Matrix&);
+	friend Matrix Solve_Linear_System(const Matrix&, const Matrix&);
+	friend double Determinant(const Matrix&);
+	friend  Matrix Adjoint(const Matrix&);
+	friend  Matrix Eigen_Value(const Matrix&);
+	friend  Matrix Eigen_Vector(const Matrix&);
+	friend  Matrix Power_Method(const Matrix&);
+	friend Matrix LeastSquare(const Matrix&, const Matrix &);
+	// 最後一筆測資
+	friend Matrix L_rref(const Matrix&);
+	friend Matrix U_rref(const Matrix&);
 
 	/* Format Dealing */
-
+	friend void Format_One(array<System::String^> ^, const std::vector<Matrix> , MATRIX_ERROR& , Matrix& );
+	friend void Format_Two(array<System::String^> ^, const std::vector<Matrix>, MATRIX_ERROR&, Matrix&, Matrix&);
 };
