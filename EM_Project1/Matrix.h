@@ -41,8 +41,9 @@ public:
 	friend Matrix Multi_Matrix_Op(array<System::String^> ^,const std::vector<Matrix>,MATRIX_ERROR&);	//多矩陣運算
 	int Rank() const;		// nonZero rows
 
+	friend Matrix Copy(const Matrix&);
 	friend Matrix Transpose(const Matrix&);
-	friend  Matrix Inverse(const Matrix&);
+	friend Matrix Inverse(const Matrix&);
 	friend Matrix Solve_Linear_System(const Matrix&, const Matrix&);
 	friend double Determinant(const Matrix&);
 	friend  Matrix Adjoint(const Matrix&);
@@ -53,6 +54,7 @@ public:
 	// 最後一筆測資
 	friend Matrix L_rref(const Matrix&);
 	friend Matrix U_rref(const Matrix&);
+	friend Matrix U_Triangle(const Matrix&);
 
 	/* Format Dealing */
 	friend void Format_One(array<System::String^> ^, const std::vector<Matrix> , MATRIX_ERROR& , Matrix& );
