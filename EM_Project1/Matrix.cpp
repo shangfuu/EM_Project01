@@ -347,6 +347,7 @@ Matrix Eigen(const Matrix& m) {
 		x1 = -2 * sqrt(q)*cos(ang / 3) - rr / 3;
 		x2 = -2 * sqrt(q)*cos((ang + 360) / 3) - rr / 3;
 		x3 = -2 * sqrt(q)*cos((ang - 360) / 3) - rr / 3;
+		Matrix m1, m2, m3;
 	}
 }
 
