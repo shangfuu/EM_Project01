@@ -899,7 +899,7 @@ namespace EM_Project1 {
 				//將項目加入VectorList中
 				VectorList->Items->Add(gcnew String(tempString.c_str()));
 			}
-			Matrix mat = Adjoint(matrices[2]);
+			Matrix mat = LeastSquare(matrices[6],matrices[7]);
 			for (int i = 0; i < mat.getRow(); i++) {
 				for (int j = 0; j < mat.getCol(); j++) {
 					std::cout << mat.Data[i].Data[j] << " ";

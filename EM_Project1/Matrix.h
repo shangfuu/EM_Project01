@@ -47,8 +47,7 @@ public:
 	friend Matrix Solve_Linear_System(const Matrix&, const Matrix&);
 	friend double Determinant(const Matrix&);
 	friend  Matrix Adjoint(const Matrix&);
-	friend  Matrix Eigen_Value(const Matrix&);
-	friend  Matrix Eigen_Vector(const Matrix&);
+	friend  Matrix Eigen(const Matrix&);
 	friend  Matrix Power_Method(const Matrix&);
 	friend Matrix LeastSquare(const Matrix&, const Matrix &);
 	// 最後一筆測資

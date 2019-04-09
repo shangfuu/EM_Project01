@@ -291,6 +291,69 @@ Matrix Adjoint(const Matrix& m) {
 	return mat;
 }
 
+Matrix Eigen(const Matrix& m) {
+	Matrix mat = m;
+	Matrix buff;
+	Vector v;
+	double rrr = 0, rr = 0, r = 0, con = 0;
+	if (mat.getRow() == 2) {
+		con += (mat.Data[0].Data[0] * mat.Data[1].Data[1] - mat.Data[1].Data[0] * mat.Data[0].Data[1]);
+		r += (mat.Data[0].Data[0] * -1 + mat.Data[1].Data[1] * -1);
+		rr = 1;
+		double x1, x2;
+		x1 = (-1 * r + sqrt(pow(r, 2) - rr * con * 4)) / (2 * rr);
+		x2 = (-1 * r - sqrt(pow(r, 2) - rr * con * 4)) / (2 * rr);
+		v.Data.resize(2);
+		v.Data[0] = x1;
+		v.Data[1] = 0;
+		buff.Data.push_back(v);
+		Matrix m1 = mat, m2 = mat;
+		for (int i = 0; i < 2; i++) {
+			m1.Data[i].Data[i] -= x1;
+			m2.Data[i].Data[i] -= x2;
+		}
+		m1 = U_Triangle(m1);
+		if (m1.Data[1].Data[1] == 0) {
+			v.Data[0] = 1;
+			v.Data[1] = m1.Data[0].Data[0] / m1.Data[0].Data[1] * -1;
+			v = Normal(v);
+			buff.Data.push_back(v);
+		}
+		if (x1 == x2) {
+			return Transpose(buff);
+		}
+		v.Data[0] = 0;
+		v.Data[1] = x2;
+		buff.Data.push_back(v);
+		m2 = U_Triangle(m2);
+		if (m2.Data[1].Data[1] == 0) {
+			v.Data[0] = 1;
+			v.Data[1] = m2.Data[0].Data[0] / m2.Data[0].Data[1] * -1;
+			v = Normal(v);
+			buff.Data.push_back(v);
+		}
+		return Transpose(buff);
+	}
+	else if (mat.getRow() == 3) {
+		con += (mat.Data[0].Data[0] * mat.Data[1].Data[1] * mat.Data[2].Data[2] + mat.Data[1].Data[0] * mat.Data[2].Data[1] * mat.Data[0].Data[2] + mat.Data[3].Data[0] * mat.Data[0].Data[1] * mat.Data[1].Data[2]);
+		con -= (mat.Data[0].Data[2] * mat.Data[1].Data[1] * mat.Data[2].Data[0] + mat.Data[0].Data[1] * mat.Data[1].Data[0] * mat.Data[2].Data[2] + mat.Data[0].Data[0] * mat.Data[1].Data[2] * mat.Data[2].Data[1]);
+		r += (mat.Data[0].Data[0] * mat.Data[1].Data[1] * -1) + ((mat.Data[0].Data[0] + mat.Data[1].Data[1])*-1 * mat.Data[2].Data[2]) + (mat.Data[0].Data[2] * mat.Data[2].Data[0]) + (mat.Data[0].Data[1] * mat.Data[1].Data[0]) + (mat.Data[1].Data[2] * mat.Data[2].Data[1]);
+		rr += mat.Data[2].Data[2];
+		rrr += -1;
+		double x1, x2, x3, q, w, ang;
+		q = (pow(rr, 2) - 3 * r) / 9;
+		w = (2 * pow(rr, 3) - 9 * rr*r + 27 * con) / 54;
+		ang = acos(w / sqrt(pow(q, 3)));
+		x1 = -2 * sqrt(q)*cos(ang / 3) - rr / 3;
+		x2 = -2 * sqrt(q)*cos((ang + 360) / 3) - rr / 3;
+		x3 = -2 * sqrt(q)*cos((ang - 360) / 3) - rr / 3;
+	}
+}
+
+Matrix LeastSquare(const Matrix& m1, const Matrix & m2) {
+	return (Inverse(Transpose(m1)*m1)*Transpose(m1)*m2);
+}
+
 Matrix Multi_Matrix_Op(array<System::String^> ^userCommand, const std::vector<Matrix>matrices, MATRIX_ERROR& Error)
 {
 	// postfix 用來存運算元
