@@ -740,73 +740,139 @@ namespace EM_Project1 {
 				else if (Error == OB_Error) {
 					Output->Text += "- Command Ob format ERROR -" + Environment::NewLine;
 				}
-				userInput = "";
+				
 			}
 			// 如果有 Load Matrix
 			if (dataManager->HasMatrix() && this->VectorLabel->Text == L"Matrix") {
-				if (userCommand[0] == "print") {
-					//定意輸出暫存
-					String^ outputTemp = "";
+				if (userCommand[0] == "/help") {
+					Output->Text += "Matrix Operation Command Format:" + Environment::NewLine +
+						"* mx can be Mutiple Matrix Operation *" + Environment::NewLine + "-- e.g mx = m0 + m1 - m2" + Environment::NewLine +
+						"- Print :  print mx" + Environment::NewLine + "- MMO : MMO mx" + Environment::NewLine + 
+						"- Add : Add ( mx , mx )" + Environment::NewLine + "- Sub : Sub ( mx , mx )" + Environment::NewLine + 
+						"- Multiple : Multi ( mx , mx )" + Environment::NewLine + "- Rank : Rank ( mx )" + Environment::NewLine + 
+						"- Transpose : Trans ( mx )" + Environment::NewLine + "- Solve Linear System : Slove ( mx )" + Environment::NewLine + 
+						"";
+				}
+				else if (userCommand[0] == "print") {
 					bool isIn = false;
-					//透過for迴圈，從向量資料中找出對應變數
-					for (unsigned int i = 0; i < matrices.size(); i++)
-					{
-						//若變數名稱與指令變數名稱符合
-						if (userCommand->Length > 1 && userCommand[1] == gcnew String(matrices[i].Name.c_str()))
-						{
-							////將輸出格式存入暫存
-							//outputTemp += "[";
-							////將輸出資料存入暫存
-							//for (unsigned int r = 0; r < matrices[i].Data.size(); r++)
-							//{
-							//	for (unsigned int c = 0; c < matrices[i].Data[r].getDim(); c++) {
-							//		outputTemp += matrices[i].Data[r].Data[c].ToString();
-							//		if (c != matrices[i].Data[r].getDim() - 1)
-							//			outputTemp += ",";
-							//	}
-							//	if(r != matrices[i].Data.size() -1)
-							//	outputTemp += Environment::NewLine;
-							//}
-							////將輸出格式存入暫存，並且換行
-							//outputTemp += "]" + Environment::NewLine;
-							////輸出暫存資訊
-							//Output->Text += gcnew String(matrices[i].Name.c_str()) + " = " + Environment::NewLine + outputTemp;
-							isIn = true;
-							Matrix mat = matrices[i];
-							mat.print(Output);
-							break;
-						}
+					//定意輸出暫存
+					//String^ outputTemp = "";
+					////透過for迴圈，從向量資料中找出對應變數
+					//for (unsigned int i = 0; i < matrices.size(); i++)
+					//{
+					//	//若變數名稱與指令變數名稱符合
+					//	if (userCommand->Length > 1 && userCommand[1] == gcnew String(matrices[i].Name.c_str()))
+					//	{
+					//		////將輸出格式存入暫存
+					//		//outputTemp += "[";
+					//		////將輸出資料存入暫存
+					//		//for (unsigned int r = 0; r < matrices[i].Data.size(); r++)
+					//		//{
+					//		//	for (unsigned int c = 0; c < matrices[i].Data[r].getDim(); c++) {
+					//		//		outputTemp += matrices[i].Data[r].Data[c].ToString();
+					//		//		if (c != matrices[i].Data[r].getDim() - 1)
+					//		//			outputTemp += ",";
+					//		//	}
+					//		//	if(r != matrices[i].Data.size() -1)
+					//		//	outputTemp += Environment::NewLine;
+					//		//}
+					//		////將輸出格式存入暫存，並且換行
+					//		//outputTemp += "]" + Environment::NewLine;
+					//		////輸出暫存資訊
+					//		//Output->Text += gcnew String(matrices[i].Name.c_str()) + " = " + Environment::NewLine + outputTemp;
+					//		isIn = true;
+					//		Matrix mat = matrices[i];
+					//		mat.print(Output);
+					//		break;
+					//	}
+					//}
+					Matrix mat = Multi_Matrix_Op(userCommand,matrices,M_Error);
+					if (M_Error == M_Correct) {
+						mat.print(Output);
 					}
-					if (!isIn)	Output->Text +=  "- Variable Name Not Found" + Environment::NewLine;
 				}
 				else if (userCommand[0] == "MMO") {
 					Matrix mat = Multi_Matrix_Op(userCommand,matrices,M_Error);
-					if(!M_Error)
+					if (M_Error == M_Correct) {
 						mat.print(Output);
+					}
 				}
 				else if (userCommand[0] == "Add") {
 					Matrix mat1, mat2;
 					Format_Two(userCommand, matrices, M_Error, mat1, mat2);
-					if (!M_Error) {
+					if (M_Error == M_Correct) {
 						if (mat1.getRow() != mat2.getRow() || mat1.getCol() != mat2.getCol()) {
 							M_Error = RC_Error;
 						}
 						else {
 							Matrix tmp = mat1 + mat2;
-							tmp.Name = mat1.Name + " + " + mat2.Name;
 							tmp.print(Output);
 						}
 					}
 				}
 				else if (userCommand[0] == "Sub") {
+					Matrix mat1, mat2;
+					Format_Two(userCommand, matrices, M_Error, mat1, mat2);
+					if (M_Error == M_Correct) {
+						if (mat1.getRow() != mat2.getRow() || mat1.getCol() != mat2.getCol()) {
+							M_Error = RC_Error;
+						}
+						else {
+							Matrix tmp = mat1 - mat2;
+							tmp.print(Output);
+						}
+					}
+				}
+				else if (userCommand[0] == "Multi") {
+					Matrix mat1, mat2;
+					Format_Two(userCommand, matrices, M_Error, mat1, mat2);
+					if (M_Error == M_Correct) {
+						if (mat1.getCol() != mat2.getRow()) {
+							M_Error = RC_Error;
+						}
+						else {
+							Matrix tmp = mat1 * mat2;
+							tmp.print(Output);
+						}
+					}
+				}
+				else if (userCommand[0] == "Rank") {
+					Matrix mat;
+					Format_One(userCommand,matrices,M_Error,mat);
+					if (!M_Error) {
+						int rank = mat.Rank();
+						Output->Text += "Rank(" + gcnew String(mat.Name.c_str()) + ")" + Environment::NewLine + rank.ToString() + Environment::NewLine;
+					}
+				}
+				else if (userCommand[0] == "Trans") {
+					Matrix mat;
+					Format_One(userCommand,matrices,M_Error,mat);
+					if (!M_Error) {
+						mat = Transpose(mat);
+						mat.Name = "Trans(" + mat.Name + ")";
+						mat.print(Output);
+					}
+				}
+				else if (userCommand[0] == "Solve") {
 
 				}
 				else {
 					Output->Text += "- Command not found -" + Environment::NewLine;
 				}
 
-			}
+				/* Error LOG */
+				if (M_Error == M_ERROR) {
+					Output->Text += "- Command Format Error" + Environment::NewLine + "--> /help to See More" + Environment::NewLine;
+				}
+				else if (M_Error == RC_Error) {
+					Output->Text += "- Illegal Operation between Two Matrices" + Environment::NewLine;
+				}
+				else if (M_Error == VN_ErrorM) {
+					Output->Text += "- Variable Name Not Found" + Environment::NewLine;
+				}
 
+			}
+			userInput = "";
 		}
 		else
 		{
@@ -825,6 +891,8 @@ namespace EM_Project1 {
 		MarshalString(openFileDialog1->FileName, tempFileName);
 		//將檔案路徑名稱傳入dataManager
 		dataManager->SetFileName(tempFileName);
+		//清空所有儲存資料
+		dataManager->clear();
 
 		if (this->VectorLabel->Text == L"Vector") {
 			openVectorDialog1_FileOk();
@@ -844,6 +912,7 @@ namespace EM_Project1 {
 		{
 			//將VectorList中項目先做清除
 			VectorList->Items->Clear();
+
 			//取得所有向量資料
 			std::vector<Vector> vectors = dataManager->GetVectors();
 
@@ -875,6 +944,7 @@ namespace EM_Project1 {
 		{
 			//將VectorList中項目先做清除
 			VectorList->Items->Clear();
+
 			//取得所有向量資料
 			std::vector<Matrix> matrices = dataManager->GetMatrices();
 
@@ -899,14 +969,6 @@ namespace EM_Project1 {
 				//將項目加入VectorList中
 				VectorList->Items->Add(gcnew String(tempString.c_str()));
 			}
-			Matrix mat = LeastSquare(matrices[6],matrices[7]);
-			for (int i = 0; i < mat.getRow(); i++) {
-				for (int j = 0; j < mat.getCol(); j++) {
-					std::cout << mat.Data[i].Data[j] << " ";
-				}
-				std::cout << std::endl;
-			}
-			//std::cout << Determinant(matrices[1]);
 			Output->Text += "-Matrix datas have been loaded-" + Environment::NewLine;
 		}
 	}

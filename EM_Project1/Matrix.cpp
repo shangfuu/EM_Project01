@@ -4,6 +4,11 @@ Matrix::Matrix()
 {
 }
 
+Matrix::Matrix(std::string name)
+{
+	this->Name = name;
+}
+
 void Matrix::print(System::Windows::Forms::TextBox^ Output)
 {
 	//定意輸出暫存
@@ -31,7 +36,7 @@ void Matrix::print(System::Windows::Forms::TextBox^ Output)
 
 Matrix operator+(const Matrix& m1, const Matrix& m2)
 {
-	Matrix mat;
+	Matrix mat(m1.Name + "+" + m2.Name);
 	for (int i = 0; i < m1.getRow(); i++) {
 		mat.Data.push_back(m1.Data[i] + m2.Data[i]);
 	}
@@ -40,7 +45,7 @@ Matrix operator+(const Matrix& m1, const Matrix& m2)
 
 Matrix operator-(const Matrix & m1, const Matrix & m2)
 {
-	Matrix mat;
+	Matrix mat(m1.Name + "-" + m2.Name);
 	for (int i = 0; i < m1.getRow(); i++) {
 		mat.Data.push_back(m1.Data[i] - m2.Data[i]);
 	}
@@ -49,7 +54,7 @@ Matrix operator-(const Matrix & m1, const Matrix & m2)
 
 Matrix operator*(const Matrix & m1, const Matrix & m2)
 {
-	Matrix mat;
+	Matrix mat(m1.Name + "*" + m2.Name);
 	mat.Data.resize(m1.getRow());
 	for (int i = 0; i < m1.getRow(); i++) {
 		mat.Data[i].Data.resize(m2.getCol());
@@ -78,7 +83,7 @@ int Matrix::Rank() const
 }
 
 Matrix Copy(const Matrix& m) {
-	Matrix mat;
+	Matrix mat(m.Name);
 	int flag = 0;
 	for (int i = 0; i < m.getRow(); i++) {
 		if (m.Data[i].Data[0] == 1) {
@@ -99,7 +104,7 @@ Matrix Copy(const Matrix& m) {
 }
 
 Matrix Transpose(const Matrix& m) {
-	Matrix mat;
+	Matrix mat(m.Name);
 	mat.Data.resize(m.getCol());
 	for (int i = 0; i < m.getCol(); i++) {
 		mat.Data[i].Data.resize(m.getRow());
@@ -399,28 +404,29 @@ Matrix Multi_Matrix_Op(array<System::String^> ^userCommand, const std::vector<Ma
 				}
 			}
 			if (!isIn) {
-				Error = MMO_Error;
+				Error = VN_ErrorM;
 				break;
 			}
 		}
 	}
 
-	// 兩變數以上不能沒有運算元
-	if (postfix.size() > 1 && stack.size() == 0) {
-		Error = MMO_Error;
-	}
-	else {
-		while (stack.size() > 0 && Error == M_Correct) {
-			if (stack.back() == "(") {
-				Error = MMO_Error;
-				break;
-			}
-			postfix.push_back(stack.back());
-			stack.pop_back();
+	if (Error == M_Correct) {
+		// 兩變數以上不能沒有運算元
+		if (postfix.size() > 1 && stack.size() == 0) {
+			Error = M_ERROR;
 		}
+		else {
+			while (stack.size() > 0 && Error == M_Correct) {
+				if (stack.back() == "(") {
+					Error = M_ERROR;
+					break;
+				}
+				postfix.push_back(stack.back());
+				stack.pop_back();
+			}
+		}
+		if (postfix.size() == 0) Error = M_ERROR;
 	}
-	if (postfix.size() == 0) Error = MMO_Error;
-
 	// 沒有錯誤才運算
 	if (Error == M_Correct) {
 

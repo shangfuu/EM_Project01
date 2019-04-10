@@ -1,15 +1,15 @@
 #pragma once
-#include<vector>
-#include<math.h>
-#include<iostream>
-#include<fstream>
-#include<string>
+#include <vector>
+#include <math.h>
+#include <iostream>
+#include <fstream>
+#include <string>
 #include "Vector.h"
 #define PI 3.14159265358979323846
 
 /***Error Type***/
 enum MATRIX_ERROR {
-	M_Correct = 0, M_ERROR, MMO_Error, RC_Error
+	M_Correct = 0, M_ERROR, RC_Error, VN_ErrorM,
 };
 
 //©w¸q Matrix
@@ -17,7 +17,7 @@ class Matrix
 {	
 public:
 	Matrix();
-
+	Matrix(std::string);
 
 	std::string Name;
 	std::vector<Vector> Data;	// Row Vector

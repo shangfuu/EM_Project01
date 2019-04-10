@@ -202,3 +202,10 @@ bool DataManager::HasMatrix()
 	}
 	return false;
 }
+
+void DataManager::clear() {
+	this->Vectors.clear();
+	this->Matrices.clear();
+	this->VectorVariableIndex = 0;
+	this->MatrixVariableIndex = 0;
+}
