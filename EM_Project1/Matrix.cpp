@@ -243,7 +243,9 @@ Matrix Inverse(const Matrix& m) {
 }
 
 Matrix Solve_Linear_System(const Matrix& m1, const Matrix& m2) {
-	return (Inverse(m1)*m2);
+	Matrix mat = (Inverse(m1)*m2);
+	mat.Name = "(" + m1.Name + ") \\ (" + m2.Name + ")";
+	return mat;
 }
 
 double Determinant(const Matrix& m)
@@ -373,7 +375,7 @@ Matrix Multi_Matrix_Op(array<System::String^> ^userCommand, const std::vector<Ma
 		std::string tmpString;
 		MarshalString(userCommand[i], tmpString);
 
-		if (tmpString == "+" || tmpString == "-" || tmpString == "*" || tmpString == "/")
+		if (tmpString == "+" || tmpString == "-" || tmpString == "*" || tmpString == "/" || tmpString == "\\" )
 		{
 			while (stack.size() > 0 && (priority(stack.back()) >= priority(tmpString))) {
 				postfix.push_back(stack.back());
@@ -465,6 +467,17 @@ Matrix Multi_Matrix_Op(array<System::String^> ^userCommand, const std::vector<Ma
 				// Multi
 				else {
 					result[top - 2] = result[top - 2] * result[top - 1];
+				}
+				result.pop_back();
+			}
+			else if (postfix[i] == "\\") {
+				if (result[top-2].getRow() != result[top-1].getRow()) {
+					Error = RC_Error;
+					break;
+				}
+				// Solve Linear System
+				else {
+					result[top - 2] = Solve_Linear_System(result[top-2],result[top-1]);
 				}
 				result.pop_back();
 			}

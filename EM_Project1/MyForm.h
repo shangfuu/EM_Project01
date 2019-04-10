@@ -750,7 +750,8 @@ namespace EM_Project1 {
 						"- Print :  print mx" + Environment::NewLine + "- MMO : MMO mx" + Environment::NewLine + 
 						"- Add : Add ( mx , mx )" + Environment::NewLine + "- Sub : Sub ( mx , mx )" + Environment::NewLine + 
 						"- Multiple : Multi ( mx , mx )" + Environment::NewLine + "- Rank : Rank ( mx )" + Environment::NewLine + 
-						"- Transpose : Trans ( mx )" + Environment::NewLine + "- Solve Linear System : Slove ( mx )" + Environment::NewLine + 
+						"- Transpose : Trans ( mx )" + Environment::NewLine + "- Solve Linear System : Solve ( mx \\ mx )" + Environment::NewLine + 
+						"- Determinants : Det ( mx )" + Environment::NewLine + "- Inverse : Inv ( mx )" + Environment::NewLine + 
 						"";
 				}
 				else if (userCommand[0] == "print") {
@@ -854,10 +855,30 @@ namespace EM_Project1 {
 					}
 				}
 				else if (userCommand[0] == "Solve") {
-
+					Matrix mat;
+					Format_One(userCommand,matrices,M_Error,mat);
+					if (!M_Error) {
+						mat.print(Output);
+					}
+				}
+				else if (userCommand[0] == "Det") {
+					Matrix mat;
+					Format_One(userCommand, matrices, M_Error, mat);
+					if (!M_Error) {
+						double det = Determinant(mat);
+						Output->Text += "Det(" + gcnew String(mat.Name.c_str()) + ")" + Environment::NewLine + det.ToString() + Environment::NewLine;
+					}
+				}
+				else if (userCommand[0] == "Inv") {
+					Matrix mat;
+					Format_One(userCommand, matrices, M_Error, mat);
+					if (!M_Error) {
+						mat = Inverse(mat);
+						mat.print(Output);
+					}
 				}
 				else {
-					Output->Text += "- Command not found -" + Environment::NewLine;
+					Output->Text += "- Command not found -" + Environment::NewLine + "--> /help to See More" + Environment::NewLine;
 				}
 
 				/* Error LOG */

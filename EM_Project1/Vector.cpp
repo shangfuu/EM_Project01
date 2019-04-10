@@ -462,5 +462,6 @@ void Format_Muti(array<System::String^> ^userCommand, const std::vector<Vector> 
 int priority(std::string op) {
 	if (op == "+" || op == "-")	return 1;
 	else if (op == "*" || op == "/") return 2;
+	else if (op == "\\") return 0;
 	else return 0;
 }
