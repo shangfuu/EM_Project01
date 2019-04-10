@@ -11,8 +11,7 @@
 int priority(std::string);
 /***** Error Type *****/
 enum VECTOR_ERROR {
-	Correct = 0, E_Error = 1, MVS_Error, Dim_Error, SCA_Error, DOT_Error, ADD_Error, NORM_Error, NML_Error, CRS_Error, COM_Error, PRJ_Error, AREA_Error,
-	IsPRL_Error, IsORTG_Error, ANG_Error, PN_Error, IsLI_Error, OB_Error
+	Correct = 0, E_Error = 1, Dim_Error, VN_Error
 };
 
 class Vector

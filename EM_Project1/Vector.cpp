@@ -218,7 +218,7 @@ Vector MVS(array<System::String^> ^userCommand, std::vector<Vector> vectors, VEC
 				}
 			}
 			if (!isIn) {
-				Error = MVS_Error;
+				Error = E_Error;
 				break;
 			}
 		}
@@ -226,19 +226,19 @@ Vector MVS(array<System::String^> ^userCommand, std::vector<Vector> vectors, VEC
 
 	// 兩變數以上不能沒有運算元
 	if (postfix.size() > 1 && stack.size() == 0) {
-		Error = MVS_Error;
+		Error = E_Error;
 	}
 	else {
 		while (stack.size() > 0 && Error == Correct) {
 			if (stack.back() == "(") {
-				Error = MVS_Error;
+				Error = E_Error;
 				break;
 			}
 			postfix.push_back(stack.back());
 			stack.pop_back();
 		}
 	}
-	if (postfix.size() == 0) Error = MVS_Error;
+	if (postfix.size() == 0) Error = E_Error;
 
 	// 沒有錯誤才運算
 	if (Error == Correct) {
