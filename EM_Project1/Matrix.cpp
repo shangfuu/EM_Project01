@@ -65,6 +65,16 @@ Matrix operator*(const Matrix & m1, const Matrix & m2)
 	return mat;
 }
 
+Matrix Scalar(const Matrix& m, const Matrix& m1) {
+	Matrix mat = m;
+	for (int i = 0; i < m.Data.size(); i++) {
+		for (int j = 0; j < m.Data[i].Data.size(); j++) {
+			mat.Data[i] = Scalar(mat.Data[i], m1.Data[0]);
+		}
+	}
+	return mat;
+}
+
 int Matrix::Rank() const
 {
 	Matrix mat = U_Triangle(*this);
@@ -629,12 +639,14 @@ Matrix Multi_Matrix_Op(array<System::String^> ^userCommand, const std::vector<Ma
 	// 沒有錯誤才運算
 	if (Error == M_Correct) {
 
+		
 		// 有無0矩陣
 		bool hasZero = false;
 
 		// Calculate
 		for (unsigned int i = 0; i < postfix.size(); i++) {
 			int top = result.size();
+			
 
 			if (postfix[i] == "+") {
 				// RC 一樣才運算
@@ -661,6 +673,10 @@ Matrix Multi_Matrix_Op(array<System::String^> ^userCommand, const std::vector<Ma
 					Error = RC_Error;
 					break;
 				}
+				// Scalar
+				else if (result[top - 2].getCol() == 1 && result[top - 2].getRow() == 1 || result[top - 1].getCol() == 1 && result[top - 1].getRow() == 1) {
+					Scalar(result[top - 2], result[top - 1]);
+				}
 				// Multi
 				else {
 					result[top - 2] = result[top - 2] * result[top - 1];
@@ -684,8 +700,16 @@ Matrix Multi_Matrix_Op(array<System::String^> ^userCommand, const std::vector<Ma
 					if (postfix[i] == matrices[j].Name) {
 						result.push_back(matrices[j]);
 						// 判斷零矩陣
-						if (matrices[j].Rank() == 0) {
-							hasZero = true;
+						hasZero = true;
+						for (int k = 0; k < matrices[j].getCol(); k++) {
+							for (int l = 0; l < matrices[j].getRow();l++) {
+								if (matrices[j].Data[k].Data[l] != 0) {
+									hasZero = false;
+									break;
+								}
+							}
+						}
+						if (hasZero) {
 							result.back().Name = "Zero";
 						}
 					}
