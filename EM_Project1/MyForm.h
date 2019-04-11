@@ -201,6 +201,7 @@ namespace EM_Project1 {
 				 // VectorList
 				 // 
 				 this->VectorList->FormattingEnabled = true;
+				 this->VectorList->HorizontalScrollbar = true;
 				 this->VectorList->ItemHeight = 12;
 				 this->VectorList->Location = System::Drawing::Point(3, 288);
 				 this->VectorList->Name = L"VectorList";
@@ -236,6 +237,7 @@ namespace EM_Project1 {
 				 this->Output->Multiline = true;
 				 this->Output->Name = L"Output";
 				 this->Output->ReadOnly = true;
+				 this->Output->ScrollBars = System::Windows::Forms::ScrollBars::Both;
 				 this->Output->Size = System::Drawing::Size(440, 614);
 				 this->Output->TabIndex = 1;
 				 // 
@@ -252,7 +254,7 @@ namespace EM_Project1 {
 				 this->Controls->Add(this->tableLayoutPanel1);
 				 this->Controls->Add(this->menuStrip2);
 				 this->Name = L"MyForm";
-				 this->Text = L"VectorExample";
+				 this->Text = L"Project 1";
 				 this->Load += gcnew System::EventHandler(this, &MyForm::WindowsForm_Load);
 				 this->menuStrip2->ResumeLayout(false);
 				 this->menuStrip2->PerformLayout();
@@ -360,7 +362,8 @@ namespace EM_Project1 {
 					if (Error == Correct) {
 						Output->Text += "-->" + Environment::NewLine;
 						for (int i = 0; i < result.getDim(); i++) {
-							Output->Text += result.Data[i].ToString() + "  ";
+							Output->Text += result.Data[i].ToString();
+							if(i != result.getDim() -1)	Output->Text += ",  ";
 						}
 						Output->Text += Environment::NewLine;
 					}
@@ -372,7 +375,8 @@ namespace EM_Project1 {
 					if (Error == Correct) {
 						Output->Text += "-->" + Environment::NewLine;
 						for (int i = 0; i < result.getDim(); i++) {
-							Output->Text += result.Data[i].ToString() + "  ";
+							Output->Text += result.Data[i].ToString();
+							if (i != result.getDim() - 1)	Output->Text += ",  ";
 						}
 						Output->Text += Environment::NewLine;
 					}
@@ -393,7 +397,8 @@ namespace EM_Project1 {
 							/* 輸出處理 */
 							Output->Text += "-->" + Environment::NewLine;
 							for (int i = 0; i < tmp.getDim(); i++) {
-								Output->Text += tmp.Data[i].ToString() + "  ";
+								Output->Text += tmp.Data[i].ToString();
+								if (i != tmp.getDim() - 1)	Output->Text += ",  ";
 							}
 							Output->Text += Environment::NewLine;
 						}
@@ -416,7 +421,8 @@ namespace EM_Project1 {
 							/* 輸出處理 */
 							Output->Text += "-->" + Environment::NewLine;
 							for (int i = 0; i < tmp.getDim(); i++) {
-								Output->Text += tmp.Data[i].ToString() + "  ";
+								Output->Text += tmp.Data[i].ToString();
+								if (i != tmp.getDim() - 1)	Output->Text += ",  ";
 							}
 							Output->Text += Environment::NewLine;
 						}
@@ -442,7 +448,8 @@ namespace EM_Project1 {
 
 							Output->Text += "-->" + Environment::NewLine;
 							for (int i = 0; i < tmp.getDim(); i++) {
-								Output->Text += tmp.Data[i].ToString() + "  ";
+								Output->Text += tmp.Data[i].ToString();
+								if (i != tmp.getDim() - 1)	Output->Text += ",  ";
 							}
 							Output->Text += Environment::NewLine;
 						}
@@ -491,7 +498,8 @@ namespace EM_Project1 {
 							/* 處理輸出 */
 							Output->Text += "-->" + Environment::NewLine;
 							for (int i = 0; i < tmp.getDim(); i++) {
-								Output->Text += tmp.Data[i].ToString() + "  ";
+								Output->Text += tmp.Data[i].ToString();
+								if (i != tmp.getDim() - 1)	Output->Text += ",  ";
 							}
 							Output->Text += Environment::NewLine;
 						}
@@ -512,7 +520,8 @@ namespace EM_Project1 {
 							/* 處理輸出 */
 							Output->Text += "-->" + Environment::NewLine;
 							for (int i = 0; i < tmp.getDim(); i++) {
-								Output->Text += tmp.Data[i].ToString() + "  ";
+								Output->Text += tmp.Data[i].ToString();
+								if (i != tmp.getDim() - 1)	Output->Text += ",  ";
 							}
 							Output->Text += Environment::NewLine;
 						}
@@ -532,7 +541,8 @@ namespace EM_Project1 {
 							/* 輸出處理 */
 							Output->Text += "-->" + Environment::NewLine;
 							for (int i = 0; i < tmp.getDim(); i++) {
-								Output->Text += tmp.Data[i].ToString() + "  ";
+								Output->Text += tmp.Data[i].ToString();
+								if (i != tmp.getDim() - 1)	Output->Text += ",  ";
 							}
 							Output->Text += Environment::NewLine;
 						}
@@ -630,7 +640,8 @@ namespace EM_Project1 {
 							/* 處理輸出 */
 							Output->Text += "-->" + Environment::NewLine;
 							for (int i = 0; i < tmp.getDim(); i++) {
-								Output->Text += tmp.Data[i].ToString() + "  ";
+								Output->Text += tmp.Data[i].ToString();
+								if (i != tmp.getDim() - 1)	Output->Text += ",  ";
 							}
 							Output->Text += Environment::NewLine;
 						}
@@ -678,7 +689,8 @@ namespace EM_Project1 {
 							Output->Text += "-->" + Environment::NewLine + gcnew String("normal") + "  " + tmp.size().ToString() + Environment::NewLine;
 							for (unsigned int i = 0; i < tmp.size(); i++) {
 								for (unsigned int j = 0; j < tmp[i].getDim(); j++) {
-									Output->Text += tmp[i].Data[j].ToString() + "  ";
+									Output->Text += tmp[i].Data[i].ToString();
+									if (i != tmp[i].getDim() - 1)	Output->Text += ",  ";
 								}
 								Output->Text += Environment::NewLine;
 							}
@@ -918,7 +930,7 @@ namespace EM_Project1 {
 									if(j == 0)
 										Output->Text += PM[i].Data[j].ToString();
 									else
-										Output->Text += "," + PM[i].Data[j].ToString();
+										Output->Text += ",  " + PM[i].Data[j].ToString();
 								}
 								Output->Text += Environment::NewLine;
 							}

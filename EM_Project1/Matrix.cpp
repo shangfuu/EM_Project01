@@ -14,22 +14,23 @@ void Matrix::print(System::Windows::Forms::TextBox^ Output)
 	//定意輸出暫存
 	System::String^ outputTemp = "";
 
-	outputTemp += "[";
+	
 	//將輸出資料存入暫存
 	for (unsigned int r = 0; r < this->getRow(); r++)
 	{
+		outputTemp += "[ ";
 		for (unsigned int c = 0; c < this->getCol(); c++) {
 			outputTemp += this->Data[r].Data[c].ToString();
 			if (c != this->Data[r].getDim() - 1)
-				outputTemp += ",";
+				outputTemp += ",  ";
 		}
 		if (r != this->Data.size() - 1)
-			outputTemp += System::Environment::NewLine;
+			outputTemp += " ]" + System::Environment::NewLine;
 	}
-	//將輸出格式存入暫存，並且換行
-	outputTemp += "]" + System::Environment::NewLine;
+	outputTemp += " ]" + System::Environment::NewLine;
 	//輸出暫存資訊
-	Output->Text += gcnew System::String(this->Name.c_str()) + " = " + System::Environment::NewLine + outputTemp;
+	Output->Text += "---------------------" + System::Environment::NewLine + 
+		gcnew System::String(this->Name.c_str()) + " = " + System::Environment::NewLine + outputTemp;
 }
 
 Matrix operator+(const Matrix& m1, const Matrix& m2)
