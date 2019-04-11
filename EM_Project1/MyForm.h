@@ -315,7 +315,8 @@ namespace EM_Project1 {
 			else if (dataManager->HasVector() && this->VectorLabel->Text == L"Vector") {
 
 				if (userCommand[0] == "/help" && userCommand[1] == "-v") {
-					Output->Text += Environment::NewLine + "Vector Operation Command Format:" + Environment::NewLine
+					Output->Text += Environment::NewLine + "Vector Operation Command Format:" + Environment::NewLine +
+						""
 						+ Environment::NewLine;
 				}
 				else if (userCommand[0] == "print")
@@ -683,7 +684,8 @@ namespace EM_Project1 {
 						"- Multiple : Multi ( mx , mx )" + Environment::NewLine + "- Rank : Rank ( mx )" + Environment::NewLine +
 						"- Transpose : Trans ( mx )" + Environment::NewLine + "- Solve Linear System : Solve ( mx \\ mx )" + Environment::NewLine +
 						"- Determinants : Det ( mx )" + Environment::NewLine + "- Inverse : Inv ( mx )" + Environment::NewLine +
-						"" + 
+						"- Adjoint : Adj ( mx )" + Environment::NewLine + "- Eigen Vector and Eigen Value : Eigen ( mx )" + Environment::NewLine +
+						"- Power Method : PM ( mx )" + Environment::NewLine + "LeastSquare : LS ( mx , mx )" + Environment::NewLine +
 						Environment::NewLine;
 				}
 				else if (userCommand[0] == "print") {
@@ -806,10 +808,103 @@ namespace EM_Project1 {
 					Format_One(userCommand, matrices, M_Error, mat);
 					if (!M_Error) {
 						if (mat.getCol() != mat.getRow()) {
-							M_Error = M_ERROR;
+							Output->Text += "- error" +Environment::NewLine;
 						}
 						else {
 							mat = Inverse(mat);
+							mat.Name = "Inv(" + mat.Name + ")";
+							mat.print(Output);
+						}
+					}
+				}
+				else if (userCommand[0] == "Adj") {
+					Matrix mat;
+					Format_One(userCommand, matrices, M_Error, mat);
+					if (!M_Error) {
+						if (mat.getCol() != mat.getRow()) {
+							Output->Text += "- Matrix Must be Square Matrix" + Environment::NewLine;
+						}
+						else {
+							mat = Adjoint(mat);
+							mat.Name = "Adj(" + mat.Name + ")     " + std::to_string(mat.getCol()) + " " + std::to_string(mat.getRow());
+							mat.print(Output);
+						}
+					}
+				}
+				else if (userCommand[0] == "Eigen") {
+					Matrix mat;
+					Format_One(userCommand, matrices, M_Error, mat);
+					if (!M_Error) {
+						if (mat.getCol() != mat.getRow()) {
+							Output->Text += "- Matrix Must be Square Matrix" + Environment::NewLine;
+						}
+						else if (mat.getCol() > 3) {
+							Output->Text += "- error" + Environment::NewLine;
+						}
+						else {
+							int sizeV = mat.getCol();
+							mat = Eigen(mat);
+							Output->Text += "Eigen(" + gcnew String(mat.Name.c_str()) + ")" + Environment::NewLine +
+								"v = " + Environment::NewLine;
+							Matrix eVector, eValue;
+							for (int i = 0; i < mat.getRow(); i++) {
+								Vector tmpVec,tmpVal;
+								for (int j = 0; j < mat.getCol(); j++) {
+									if (i < sizeV && j < sizeV) {
+										tmpVal.Data.push_back(mat.Data[i].Data[j]);
+									//	eValue.Data[i].Data[j] = mat.Data[i].Data[j];
+									}
+									else {
+										tmpVec.Data.push_back(mat.Data[i].Data[j]);
+									//	eVector.Data[i].Data[j] = mat.Data[i].Data[j];
+									}
+								}
+								eVector.Data.push_back(tmpVec);
+								eValue.Data.push_back(tmpVal);
+							}
+							eVector.print(Output);
+							Output->Text += "d =" + Environment::NewLine;
+							eValue.print(Output);
+						}
+					}
+				}
+				else if (userCommand[0] == "PM") {
+					Matrix mat;
+					Format_One(userCommand, matrices, M_Error, mat);
+					if (!M_Error) {
+						if (mat.getCol() != mat.getRow()) {
+							Output->Text += "- Matrix Must be Square Matrix" + Environment::NewLine;
+						}
+						else {
+							std::vector<Vector>PM = Power_Method(mat);
+							Output->Text += "PM(" + gcnew String(mat.Name.c_str()) + ")" + Environment::NewLine
+								+ "v = " + Environment::NewLine;
+
+							for (int i = 0; i < PM.size() && i < 2; i++) {
+								if (i == 1) {
+									Output->Text += "d = " + Environment::NewLine;
+								}
+								for (int j = 0; j < PM[i].getDim(); j++) {
+									if(j == 0)
+										Output->Text += PM[i].Data[j].ToString();
+									else
+										Output->Text += "," + PM[i].Data[j].ToString();
+								}
+								Output->Text += Environment::NewLine;
+							}
+						}
+					}
+				}
+				else if (userCommand[0] == "LS") {
+					Matrix mat1, mat2;
+					Format_Two(userCommand, matrices, M_Error, mat1, mat2);
+					if (!M_Error) {
+						if (mat2.getRow() != mat1.getRow() || mat2.getCol() != 1) {
+							M_Error = RC_Error;
+						}
+						else {
+							Matrix mat = LeastSquare(mat1, mat2);
+							mat.Name = "LS(" + mat1.Name + "," + mat2.Name + ")";
 							mat.print(Output);
 						}
 					}
@@ -828,7 +923,6 @@ namespace EM_Project1 {
 				else if (M_Error == VN_ErrorM) {
 					Output->Text += "- Variable Name Not Found" + Environment::NewLine;
 				}
-
 			}
 			else {
 				Output->Text += "- Select your File first " + Environment::NewLine;

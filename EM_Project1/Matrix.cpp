@@ -30,8 +30,6 @@ void Matrix::print(System::Windows::Forms::TextBox^ Output)
 	outputTemp += "]" + System::Environment::NewLine;
 	//輸出暫存資訊
 	Output->Text += gcnew System::String(this->Name.c_str()) + " = " + System::Environment::NewLine + outputTemp;
-
-
 }
 
 Matrix operator+(const Matrix& m1, const Matrix& m2)
@@ -298,6 +296,92 @@ Matrix Adjoint(const Matrix& m) {
 	return mat;
 }
 
+Vector FindK(const Matrix& m, int n) {
+	Matrix m1 = m;
+	Vector v;
+	v.Data.resize(n);
+	if (m1.Data[0].Data[0] != 0) {
+		if (m1.Data[1].Data[1] == 0) {
+			v.Data[1] = 1;
+			if (m1.Data[1].Data[2] != 0) {
+				v.Data[2] = 0;
+				if (m1.Data[0].Data[1] != 0) {
+					v.Data[0] = 1;
+					v.Data[1] = m1.Data[0].Data[0] / m1.Data[0].Data[1] * -1;
+				}
+				else {
+					v.Data[0] = 0;
+				}
+			}
+			else {
+				if (m1.Data[0].Data[1] == 0) {
+					if (m1.Data[0].Data[2] == 0) {
+						v.Data[0] = 0;
+						v.Data[2] = -1;
+					}
+					else {
+						v.Data[1] = 0;
+						v.Data[0] = 1;
+						v.Data[2] = m1.Data[0].Data[0] / m1.Data[0].Data[2] * -1;
+					}
+				}
+				else {
+					if (m1.Data[0].Data[2] == 0) {
+						v.Data[2] = 0;
+						v.Data[0] = 1;
+						v.Data[1] = m1.Data[0].Data[0] / m1.Data[0].Data[1] * -1;
+					}
+					else {
+						v.Data[2] = 1;
+						v.Data[0] = (v.Data[1] * m1.Data[0].Data[1] + v.Data[2] * m1.Data[0].Data[2]) / m1.Data[0].Data[0] * -1;
+					}
+				}
+			}
+		}
+		else {
+			if (m1.Data[1].Data[2] == 0) {
+				v.Data[1] = 0;
+				if (m1.Data[0].Data[2] == 0) {
+					v.Data[0] = 0;
+					v.Data[2] = 1;
+				}
+				else {
+					v.Data[0] = 1;
+					v.Data[2] = m1.Data[0].Data[0] / m1.Data[0].Data[2] * -1;
+				}
+			}
+			else {
+				v.Data[1] = 1;
+				v.Data[2] = m1.Data[1].Data[1] / m1.Data[1].Data[2] * -1;
+				v.Data[0] = (v.Data[1] * m1.Data[0].Data[1] + v.Data[2] * m1.Data[0].Data[2]) / m1.Data[0].Data[0] * -1;
+			}
+		}
+	}
+	else {
+		v.Data[0] = 1;
+		if (m1.Data[0].Data[1] != 0) {
+			if (m1.Data[0].Data[2] != 0) {
+				v.Data[1] = 1;
+				v.Data[2] = m1.Data[0].Data[1] / m1.Data[0].Data[2] * -1;
+			}
+			else {
+				v.Data[1] = 0;
+				v.Data[2] = 1;
+			}
+		}
+		else {
+			v.Data[1] = 1;
+			if (m1.Data[0].Data[2] != 0) {
+				v.Data[2] = 0;
+			}
+			else {
+				v.Data[2] = 1;
+			}
+		}
+	}
+	return v;
+}
+
 Matrix Eigen(const Matrix& m) {
 	Matrix mat = m;
 	Matrix buff;
@@ -314,6 +398,9 @@ Matrix Eigen(const Matrix& m) {
 		v.Data[0] = x1;
 		v.Data[1] = 0;
 		buff.Data.push_back(v);
+		v.Data[0] = 0;
+		v.Data[1] = x2;
+		buff.Data.push_back(v);
 		Matrix m1 = mat, m2 = mat;
 		for (int i = 0; i < 2; i++) {
 			m1.Data[i].Data[i] -= x1;
@@ -329,9 +416,6 @@ Matrix Eigen(const Matrix& m) {
 		if (x1 == x2) {
 			return Transpose(buff);
 		}
-		v.Data[0] = 0;
-		v.Data[1] = x2;
-		buff.Data.push_back(v);
 		m2 = U_Triangle(m2);
 		if (m2.Data[1].Data[1] == 0) {
 			v.Data[0] = 1;
@@ -342,24 +426,137 @@ Matrix Eigen(const Matrix& m) {
 		return Transpose(buff);
 	}
 	else if (mat.getRow() == 3) {
-		con += (mat.Data[0].Data[0] * mat.Data[1].Data[1] * mat.Data[2].Data[2] + mat.Data[1].Data[0] * mat.Data[2].Data[1] * mat.Data[0].Data[2] + mat.Data[3].Data[0] * mat.Data[0].Data[1] * mat.Data[1].Data[2]);
-		con -= (mat.Data[0].Data[2] * mat.Data[1].Data[1] * mat.Data[2].Data[0] + mat.Data[0].Data[1] * mat.Data[1].Data[0] * mat.Data[2].Data[2] + mat.Data[0].Data[0] * mat.Data[1].Data[2] * mat.Data[2].Data[1]);
-		r += (mat.Data[0].Data[0] * mat.Data[1].Data[1] * -1) + ((mat.Data[0].Data[0] + mat.Data[1].Data[1])*-1 * mat.Data[2].Data[2]) + (mat.Data[0].Data[2] * mat.Data[2].Data[0]) + (mat.Data[0].Data[1] * mat.Data[1].Data[0]) + (mat.Data[1].Data[2] * mat.Data[2].Data[1]);
-		rr += mat.Data[2].Data[2];
-		rrr += -1;
+		con = -1 * Determinant(mat);
+		r = -1 * ((mat.Data[0].Data[0] * mat.Data[1].Data[1] * -1) + ((mat.Data[0].Data[0] + mat.Data[1].Data[1]) * -1 * mat.Data[2].Data[2]) - (mat.Data[0].Data[2] * mat.Data[2].Data[0] * -1) - (mat.Data[0].Data[1] * mat.Data[1].Data[0] * -1) - (mat.Data[1].Data[2] * mat.Data[2].Data[1] * -1));
+		rr = -1 * (mat.Data[2].Data[2] + mat.Data[0].Data[0] + mat.Data[1].Data[1]);
+		rrr = 1;
 		double x1, x2, x3, q, w, ang;
 		q = (pow(rr, 2) - 3 * r) / 9;
 		w = (2 * pow(rr, 3) - 9 * rr*r + 27 * con) / 54;
 		ang = acos(w / sqrt(pow(q, 3)));
 		x1 = -2 * sqrt(q)*cos(ang / 3) - rr / 3;
-		x2 = -2 * sqrt(q)*cos((ang + 360) / 3) - rr / 3;
-		x3 = -2 * sqrt(q)*cos((ang - 360) / 3) - rr / 3;
-		Matrix m1, m2, m3;
+		x2 = -2 * sqrt(q)*cos((ang + 2 * PI) / 3) - rr / 3;
+		x3 = -2 * sqrt(q)*cos((ang - 2 * PI) / 3) - rr / 3;
+		v.Data.resize(3);
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				if (j == i) {
+					if (i == 0) {
+						v.Data[i] = x1;
+					}
+					else if (i == 1) {
+						v.Data[i] = x2;
+					}
+					else {
+						v.Data[i] = x3;
+					}
+				}
+				else {
+					v.Data[j] = 0;
+				}
+			}
+			buff.Data.push_back(v);
+		}
+		Matrix m1 = mat, m2 = mat, m3 = mat;
+		for (int i = 0; i < mat.getRow(); i++) {
+			for (int j = 0; j < mat.getCol(); j++) {
+				if (i == j) {
+					m1.Data[i].Data[j] -= x1;
+					m2.Data[i].Data[j] -= x2;
+					m3.Data[i].Data[j] -= x3;
+				}
+			}
+		}
+		m1 = U_Triangle(m1);
+		buff.Data.push_back(Normal(FindK(m1, 3)));
+		if (x1 != x2) {
+			if (x2 != x3) {
+				m2 = U_Triangle(m2);
+				buff.Data.push_back(Normal(FindK(m2, 3)));
+			}
+		}
+		if (x2 != x3) {
+			if (x3 != x1) {
+				m3 = U_Triangle(m3);
+				buff.Data.push_back(Normal(FindK(m3, 3)));
+			}
+		}
+		return (Transpose(buff));
 	}
 }
 
 Matrix LeastSquare(const Matrix& m1, const Matrix & m2) {
 	return (Inverse(Transpose(m1)*m1)*Transpose(m1)*m2);
+}
+
+std::vector<Vector> Power_Method(const Matrix& m) {
+	Matrix mat;
+	Matrix X;
+	X.Data.resize(m.Data.size());
+	for (int i = 0; i < m.Data.size(); i++) {
+		X.Data[i].Data.resize(1);
+		X.Data[i].Data[0] = 1;
+	}
+	mat = m;
+	for (int r = 0; r < 1500; r++) {
+		X = mat * X;
+		double scalar = X.Data[0].Data[0];
+		int loc = 0;
+		for (int i = 1; i < X.Data.size(); i++) {
+			if (abs(X.Data[i].Data[0]) > abs(scalar)) {
+				loc = i;
+				scalar = X.Data[i].Data[0];
+			}
+		}
+		for (int i = 0; i < X.Data.size(); i++) {
+			if (i == loc) {
+				X.Data[i].Data[0] = 1;
+			}
+			else {
+				X.Data[i].Data[0] /= scalar;
+			}
+		}
+	}
+	mat = mat * X;
+	double d = 0, s = 0;
+	for (int i = 0; i < mat.Data.size(); i++) {
+		d += mat.Data[i].Data[0] * X.Data[i].Data[0];
+		s += X.Data[i].Data[0] * X.Data[i].Data[0];
+	}
+	Vector eigenvalue;
+	double val = d / s;
+	eigenvalue.Data.push_back(val);
+	mat = m;
+	for (int i = 0; i < mat.Data.size(); i++) {
+		mat.Data[i].Data[i] -= val;
+	}
+	mat = U_Triangle(mat);
+	Vector v;
+	v.Data.resize(mat.Data.size());
+	for (int i = mat.Data.size() - 1; i >= 0; i--) {
+		if (mat.Data[i].Data[i] == 0) {
+			v.Data[i] = 1;
+		}
+		else {
+			v.Data[i] = 0;
+			if (i != mat.Data.size() - 1) {
+				double sum = 0;
+				for (int j = mat.Data.size() - 1; j >= i; j--) {
+					if (j == i) {
+						v.Data[j] = sum / mat.Data[i].Data[i] * -1;
+					}
+					else {
+						sum += v.Data[j] * mat.Data[i].Data[j];
+					}
+				}
+			}
+		}
+	}
+	v = Normal(v);
+	std::vector<Vector>eig;
+	eig.push_back(eigenvalue);
+	eig.push_back(v);
+	return eig;
 }
 
 Matrix Multi_Matrix_Op(array<System::String^> ^userCommand, const std::vector<Matrix>matrices, MATRIX_ERROR& Error)
