@@ -894,15 +894,15 @@ namespace EM_Project1 {
 						tempString += ",";  
 					}
 				}
-				//將輸出格式存入暫存
+				//將輸出格式存入暫存t
 				tempString += "]";
 				//將項目加入VectorList中
 				VectorList->Items->Add(gcnew String(tempString.c_str()));
 			}
-			Matrix mat = LeastSquare(matrices[6],matrices[7]);
-			for (int i = 0; i < mat.getRow(); i++) {
-				for (int j = 0; j < mat.getCol(); j++) {
-					std::cout << mat.Data[i].Data[j] << " ";
+			std::vector <Vector> mat = Power_Method(matrices[2]);
+			for (int i = 0; i < mat.size(); i++) {
+				for (int j = 0; j < mat[i].Data.size(); j++) {
+					std::cout << mat[i].Data[j] << " ";
 				}
 				std::cout << std::endl;
 			}

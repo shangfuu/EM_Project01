@@ -48,7 +48,8 @@ public:
 	friend double Determinant(const Matrix&);
 	friend  Matrix Adjoint(const Matrix&);
 	friend  Matrix Eigen(const Matrix&);
-	friend  Matrix Power_Method(const Matrix&);
+	friend Vector FindK(const Matrix&, int);
+	friend std::vector<Vector> Power_Method(const Matrix&);
 	friend Matrix LeastSquare(const Matrix&, const Matrix &);
 	// 最後一筆測資
 	friend Matrix L_rref(const Matrix&);
