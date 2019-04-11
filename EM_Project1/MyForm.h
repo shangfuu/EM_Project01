@@ -305,7 +305,8 @@ namespace EM_Project1 {
 				Output->Text += Environment::NewLine + "==> \" /help \" -m to See Matrix Command Format" + Environment::NewLine +
 					"==> \" /help \" -v to See Vector Command Format" + Environment::NewLine +
 					"==> \" /c o \" to Clear Output List" + Environment::NewLine + 
-					"==> \" /c i \" to Clear Input List" + Environment::NewLine + Environment::NewLine;
+					"==> \" /c i \" to Clear Input List" + Environment::NewLine +
+					"==> * Must have Space between each Operator or variable" + Environment::NewLine + Environment::NewLine;
 			}
 			//清除input
 			else if (userCommand[0] == "/c" && userCommand[1] == "i") {
@@ -316,8 +317,17 @@ namespace EM_Project1 {
 
 				if (userCommand[0] == "/help" && userCommand[1] == "-v") {
 					Output->Text += Environment::NewLine + "Vector Operation Command Format:" + Environment::NewLine +
-						""
-						+ Environment::NewLine;
+						"* v can be Mutiple Matrix Operation *" + Environment::NewLine + "-- e.g v = v0 + v1 - v2" + Environment::NewLine +
+						"- Print :  print v" + Environment::NewLine + "- Multiple Vector Support : MVS v" + Environment::NewLine +
+						"- Dot :  Dot ( v , v )" + Environment::NewLine + "- Add : Add ( v , v )" + Environment::NewLine +
+						"- Scalar :  Scalar ( v , v )" + Environment::NewLine + "- Norm : Norm ( v )" + Environment::NewLine +
+						"- Normal :  Normal ( v )" + Environment::NewLine + "- Cross Product : Cross ( v , v )" + Environment::NewLine +
+						"- Component :  Com ( v , v )" + Environment::NewLine + "- Projection : Proj ( v , v )" + Environment::NewLine +
+						"- Triangle Area :  Area ( v , v )" + Environment::NewLine + "- IsParallel : IsPrl ( v , v )" + Environment::NewLine +
+						"- IsOrthogonal :  IsOrg ( v , v )" + Environment::NewLine + "- Angle : Angle ( v , v )" + Environment::NewLine +
+						"- PN :  pN ( v , v )" + Environment::NewLine + "- Is Linear Independent : IsLI ( v , v , .... )" + Environment::NewLine +
+						"- Ob :  Ob ( v , v , .... )" + Environment::NewLine +
+						Environment::NewLine;
 				}
 				else if (userCommand[0] == "print")
 				{
@@ -566,7 +576,7 @@ namespace EM_Project1 {
 						}
 					}
 				}
-				else if (userCommand[0] == "IsOrtg") {
+				else if (userCommand[0] == "IsOrg") {
 					Vector vec1, vec2;
 					// 指令格式
 					Format_Two(userCommand, vectors, Error, vec1, vec2);
@@ -628,7 +638,27 @@ namespace EM_Project1 {
 				}
 				else if (userCommand[0] == "IsLI") {
 					// 支援多項量輸入
-					Output->Text += "- Function NOT Finish Yet -" + Environment::NewLine;
+					std::vector<Vector>vecs;
+					Format_Muti(userCommand, vectors, Error, vecs);
+					
+					if (Error == Correct) {
+						for (int i = 0; i < vecs.size() - 1; i++) {
+							if (vecs[i].getDim() != vecs[i + 1].getDim()) {
+								Error = Dim_Error;
+								break;
+							}
+						}
+						if (Error == Correct) {
+							Matrix tmp;
+							for (int i = 0; i < vecs.size(); i++) {
+								tmp.Data.push_back(vecs[i]);
+							}
+							std::string Ans = "";
+							if (IsLI(tmp)) Ans = "Yes";
+							else Ans = "No";
+							Output->Text += "-->" + Environment::NewLine + gcnew String(Ans.c_str()) + Environment::NewLine;
+						}
+					}
 				}
 				else if (userCommand[0] == "Ob") {
 					// 支援多項量輸入
@@ -650,7 +680,7 @@ namespace EM_Project1 {
 								for (unsigned int j = 0; j < tmp[i].getDim(); j++) {
 									Output->Text += tmp[i].Data[j].ToString() + "  ";
 								}
-								Output->Text += Environment::NewLine + Environment::NewLine;
+								Output->Text += Environment::NewLine;
 							}
 
 						}
@@ -659,11 +689,11 @@ namespace EM_Project1 {
 				//反之則判斷找不到指令
 				else
 				{
-					Output->Text += "- Command not found -" + Environment::NewLine + "==> \" /help -v \" to See More" + Environment::NewLine;
+					Output->Text += "- Command not found -" + Environment::NewLine + "==> \" /help \" to See More" + Environment::NewLine;
 				}
 				// 指令錯誤
 				if (Error == E_Error) {
-					Output->Text += "- Command not found -" + Environment::NewLine + "==> \" /help -v \" to See More" + Environment::NewLine;
+					Output->Text += "- Command Format Error -" + Environment::NewLine + "==> \" /help \" to See More" + Environment::NewLine;
 				}
 				else if (Error == VN_Error) {
 					Output->Text += "- Variable Name Not Found -" + Environment::NewLine;
@@ -679,7 +709,7 @@ namespace EM_Project1 {
 				if (userCommand[0] == "/help" && userCommand[1] ==  "-m") {
 					Output->Text += Environment::NewLine + "Matrix Operation Command Format:" + Environment::NewLine +
 						"* mx can be Mutiple Matrix Operation *" + Environment::NewLine + "-- e.g mx = m0 + m1 - m2" + Environment::NewLine +
-						"- Print :  print mx" + Environment::NewLine + "- MMO : MMO mx" + Environment::NewLine +
+						"- Print :  print mx" + Environment::NewLine + "- Multiple Matrix Operation : MMO mx" + Environment::NewLine +
 						"- Add : Add ( mx , mx )" + Environment::NewLine + "- Sub : Sub ( mx , mx )" + Environment::NewLine +
 						"- Multiple : Multi ( mx , mx )" + Environment::NewLine + "- Rank : Rank ( mx )" + Environment::NewLine +
 						"- Transpose : Trans ( mx )" + Environment::NewLine + "- Solve Linear System : Solve ( mx \\ mx )" + Environment::NewLine +
@@ -910,12 +940,12 @@ namespace EM_Project1 {
 					}
 				}
 				else {
-					Output->Text += "- Command not found -" + Environment::NewLine + "==> \" /help -m \" to See More" + Environment::NewLine;
+					Output->Text += "- Command not found -" + Environment::NewLine + "==> \" /help \" to See More" + Environment::NewLine;
 				}
 
 				/* Error LOG */
 				if (M_Error == M_ERROR) {
-					Output->Text += "- Command Format Error" + Environment::NewLine + "==> \" /help -m \" to See More" + Environment::NewLine;
+					Output->Text += "- Command Format Error" + Environment::NewLine + "==> \" /help \" to See More" + Environment::NewLine;
 				}
 				else if (M_Error == RC_Error) {
 					Output->Text += "- Illegal Operation between Two Matrices" + Environment::NewLine;

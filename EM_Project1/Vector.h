@@ -42,7 +42,7 @@ public:
 	friend bool IsParal(const Vector&, const Vector&);		// Parallrl Judge
 	friend bool IsOrthog(const Vector&, const Vector&);		// Orthogonal Judge
 	friend double Angle(const Vector&, const Vector&);
-	friend bool IsLI(const Vector&, const Vector&);		// Linear Independent Judge
+	//friend bool IsLI(const Matrix&);		// Linear Independent Judge
 	friend std::vector<Vector> Ob(const std::vector<Vector>&);		// Gram–Schmidt Orthogonalization Process
 
 	/* 處理格式 */

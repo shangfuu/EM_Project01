@@ -54,7 +54,8 @@ public:
 	// 最後一筆測資
 	friend Matrix U_Triangle(const Matrix&);
 	
-	
+	// Vector用
+	friend bool IsLI(const Matrix&);		// Linear Independent Judge
 
 	/* Format Dealing */
 	friend void Format_One(array<System::String^> ^, const std::vector<Matrix> , MATRIX_ERROR& , Matrix& );

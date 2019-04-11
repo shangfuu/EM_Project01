@@ -150,15 +150,15 @@ double Angle(const Vector& x, const Vector& y) {
 	return (acos(cosv) * 180 / PI);
 }
 
-bool IsLI(const Vector& x, const Vector& y) {
-	// 應該要Call Matrix做
-	if (IsParal(x, y)) {
-		return false;
-	}
-	else {
-		return true;
-	}
-}
+//bool IsLI(const Matrix& m) {
+//	// 應該要Call Matrix做
+//	if (m.Rank() != m.getRow()) {
+//		return false;
+//	}
+//	else {
+//		return true;
+//	}
+//}
 
 std::vector<Vector> Ob(const std::vector<Vector>& x) {
 	std::vector<Vector> buff;
@@ -218,7 +218,7 @@ Vector MVS(array<System::String^> ^userCommand, std::vector<Vector> vectors, VEC
 				}
 			}
 			if (!isIn) {
-				Error = E_Error;
+				Error = VN_Error;
 				break;
 			}
 		}

@@ -817,3 +817,13 @@ void Format_Two(array<System::String^> ^userCommand, const std::vector<Matrix> m
 		Error = M_ERROR;
 	}
 }
+
+bool IsLI(const Matrix& m) {
+	// 應該要Call Matrix做
+	if (m.Rank() != m.getRow()) {
+		return false;
+	}
+	else {
+		return true;
+	}
+}
