@@ -837,8 +837,13 @@ namespace EM_Project1 {
 					Matrix mat;
 					Format_One(userCommand, matrices, M_Error, mat);
 					if (!M_Error) {
-						double det = Determinant(mat);
-						Output->Text += "Det(" + gcnew String(mat.Name.c_str()) + ")" + Environment::NewLine + det.ToString() + Environment::NewLine;
+						if (mat.getCol() != mat.getRow()) {
+							Output->Text += "- Matrix Must be Square Matrix" + Environment::NewLine;
+						}
+						else {
+							double det = Determinant(mat);
+							Output->Text += "Det(" + gcnew String(mat.Name.c_str()) + ")" + Environment::NewLine + det.ToString() + Environment::NewLine;
+						}
 					}
 				}
 				else if (userCommand[0] == "Inv") {
