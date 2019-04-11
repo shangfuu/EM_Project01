@@ -434,10 +434,6 @@ namespace EM_Project1 {
 					// 指令格式
 					Format_Two(userCommand, vectors, Error, vec1, vec2);
 
-					// 判斷零向量
-					if (Norm(vec1)) vec1.Data.resize(1);
-					if (Norm(vec2))	vec2.Data.resize(1);
-
 					if (Error == Correct) {
 						// 維度至少要一個一維
 						if (vec1.getDim() > 1 && vec2.getDim() > 1) {
@@ -886,8 +882,7 @@ namespace EM_Project1 {
 						else {
 							int sizeV = mat.getCol();
 							mat = Eigen(mat);
-							Output->Text += "Eigen(" + gcnew String(mat.Name.c_str()) + ")" + Environment::NewLine +
-								"v = " + Environment::NewLine;
+							Output->Text += "Eigen(" + gcnew String(mat.Name.c_str()) + ")" + Environment::NewLine;
 							Matrix eVector, eValue;
 							for (int i = 0; i < mat.getRow(); i++) {
 								Vector tmpVec,tmpVal;
@@ -904,8 +899,9 @@ namespace EM_Project1 {
 								eVector.Data.push_back(tmpVec);
 								eValue.Data.push_back(tmpVal);
 							}
+							eVector.Name = "v";
+							eValue.Name = "d";
 							eVector.print(Output);
-							Output->Text += "d =" + Environment::NewLine;
 							eValue.print(Output);
 						}
 					}
