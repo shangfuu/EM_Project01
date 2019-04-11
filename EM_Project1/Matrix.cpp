@@ -639,9 +639,6 @@ Matrix Multi_Matrix_Op(array<System::String^> ^userCommand, const std::vector<Ma
 	// 沒有錯誤才運算
 	if (Error == M_Correct) {
 
-		
-		// 有無0矩陣
-		bool hasZero = false;
 
 		// Calculate
 		for (unsigned int i = 0; i < postfix.size(); i++) {
@@ -668,14 +665,14 @@ Matrix Multi_Matrix_Op(array<System::String^> ^userCommand, const std::vector<Ma
 			}
 			else if (postfix[i] == "*") {
 
+				// Scalar
+				if (result[top - 2].getCol() == 1 && result[top - 2].getRow() == 1 || result[top - 1].getCol() == 1 && result[top - 1].getRow() == 1) {
+					Scalar(result[top - 2], result[top - 1]);
+				}
 				// 不同RC
-				if (result[top - 2].getCol() != result[top - 1].getRow()) {
+				else if (result[top - 2].getCol() != result[top - 1].getRow()) {
 					Error = RC_Error;
 					break;
-				}
-				// Scalar
-				else if (result[top - 2].getCol() == 1 && result[top - 2].getRow() == 1 || result[top - 1].getCol() == 1 && result[top - 1].getRow() == 1) {
-					Scalar(result[top - 2], result[top - 1]);
 				}
 				// Multi
 				else {
@@ -699,41 +696,6 @@ Matrix Multi_Matrix_Op(array<System::String^> ^userCommand, const std::vector<Ma
 				for (unsigned int j = 0; j < matrices.size(); j++) {
 					if (postfix[i] == matrices[j].Name) {
 						result.push_back(matrices[j]);
-						// 判斷零矩陣
-						hasZero = true;
-						for (int k = 0; k < matrices[j].getCol(); k++) {
-							for (int l = 0; l < matrices[j].getRow();l++) {
-								if (matrices[j].Data[k].Data[l] != 0) {
-									hasZero = false;
-									break;
-								}
-							}
-						}
-						if (hasZero) {
-							result.back().Name = "Zero";
-						}
-					}
-				}
-			}
-
-			// 處理零矩陣
-			if (hasZero && result.size() == 2) {
-				if (result[1].Name == "Zero") {
-					result[1].Data.resize(result[0].getRow());
-					for (int i = 0; i < result[0].getRow(); i++) {
-						result[1].Data[i].Data.resize(result[0].getCol());
-						for (int j = 0; j < result[0].getCol(); j++) {
-							result[1].Data[i].Data[j] = 0;
-						}
-					}
-				}
-				else {
-					result[0].Data.resize(result[1].getRow());
-					for (int i = 0; i < result[1].getRow(); i++) {
-						result[0].Data[i].Data.resize(result[1].getCol());
-						for (int j = 0; j < result[1].getCol(); j++) {
-							result[0].Data[i].Data[j] = 0;
-						}
 					}
 				}
 			}

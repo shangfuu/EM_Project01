@@ -270,10 +270,6 @@ Vector MVS(array<System::String^> ^userCommand, std::vector<Vector> vectors, VEC
 			}
 			else if (postfix[i] == "*") {
 
-				// 判斷零向量
-				if (result[0].Name == "Zero") 	result[0].Data.resize(1);
-				if (result[1].Name == "Zero")	result[1].Data.resize(1);
-
 				// 一向量為一維 執行 Scalar
 				if (result[top - 2].getDim() == 1 || result[top - 1].getDim() == 1) {
 					result[top - 2] = Scalar(result[top - 1], result[top - 2]);
