@@ -889,7 +889,7 @@ namespace EM_Project1 {
 							std::string name = mat.Name;
 							mat = Eigen(mat);
 							if (mat.Name == "Error") {
-								Output->Text += "- error " + Environment::NewLine;
+								Output->Text += "- Error Qudratic Equation" + Environment::NewLine;
 							}
 							else {
 								Output->Text += "---------------------" + System::Environment::NewLine;
