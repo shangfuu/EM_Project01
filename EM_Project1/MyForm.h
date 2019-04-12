@@ -886,12 +886,14 @@ namespace EM_Project1 {
 						}
 						else {
 							int sizeV = mat.getCol();
+							std::string name = mat.Name;
 							mat = Eigen(mat);
 							if (mat.Name == "Error") {
 								Output->Text += "- error " + Environment::NewLine;
 							}
 							else {
-								Output->Text += "Eigen(" + gcnew String(mat.Name.c_str()) + ")" + Environment::NewLine;
+								Output->Text += "---------------------" + System::Environment::NewLine;
+								Output->Text += "Eigen(" + gcnew String(name.c_str()) + ")" + Environment::NewLine;
 								Matrix eVector, eValue;
 								for (int i = 0; i < mat.getRow(); i++) {
 									Vector tmpVec, tmpVal;
@@ -925,12 +927,13 @@ namespace EM_Project1 {
 						}
 						else {
 							std::vector<Vector>PM = Power_Method(mat);
-							Output->Text += "PM(" + gcnew String(mat.Name.c_str()) + ")" + Environment::NewLine
-								+ "v = " + Environment::NewLine;
+							Output->Text += "---------------------" + System::Environment::NewLine;
+							Output->Text += "PM(" + gcnew String(mat.Name.c_str()) + ")" + Environment::NewLine +
+								"---------------------" + System::Environment::NewLine + "v = " + Environment::NewLine;
 
 							for (int i = 0; i < PM.size() && i < 2; i++) {
 								if (i == 1) {
-									Output->Text += "d = " + Environment::NewLine;
+									Output->Text += "---------------------" + System::Environment::NewLine + "d = " + Environment::NewLine;
 								}
 								for (int j = 0; j < PM[i].getDim(); j++) {
 									if (j == 0)
