@@ -315,9 +315,11 @@ Vector FindK(const Matrix& m, int n) {
 	for (int i = mat.Data.size() - 1; i >= 0; i--) {
 		if (mat.Data[i].Data[i] == 0) {
 			v.Data[i] = 1;
-			for (int j = i + 1; j < mat.Data[i].Data.size(); j++) {
-				if (mat.Data[i].Data[j] != 0) {
-					v.Data[j] = 0;
+			if (i != mat.Data.size() - 1) {
+				for (int j = i + 1; j < mat.Data[i].Data.size(); j++) {
+					if (mat.Data[i].Data[j] != 0) {
+						v.Data[j] = 0;
+					}
 				}
 			}
 		}
@@ -532,12 +534,14 @@ std::vector<Vector> Power_Method(const Matrix& m) {
 	v.Data.resize(mat.Data.size());
 	for (int i = mat.Data.size() - 1; i >= 0; i--) {
 		if (mat.Data[i].Data[i] == 0) {
-			for (int j = i + 1; j < mat.Data[i].Data.size(); j++) {
-				if (mat.Data[i].Data[j] != 0) {
-					v.Data[j] = 0;
+			v.Data[i] = 1;
+			if (i != mat.Data.size() - 1) {
+				for (int j = i + 1; j < mat.Data[i].Data.size(); j++) {
+					if (mat.Data[i].Data[j] != 0) {
+						v.Data[j] = 0;
+					}
 				}
 			}
-			v.Data[i] = 1;
 		}
 		else {
 			v.Data[i] = 0;
