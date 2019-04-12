@@ -151,14 +151,15 @@ Matrix U_Triangle(const Matrix& m) {
 					}
 				}
 				if (nfind) {
-					break;
 				}
-				for (int j = i + 1; j < mat.getRow(); j++) {
-					double scalar = mat.Data[j].Data[i] / mat.Data[i].Data[i];
-					for (int k = 0; k < mat.Data[j].Data.size(); k++) {
-						mat.Data[j].Data[k] -= mat.Data[i].Data[k] * scalar;
-						if (abs(mat.Data[j].Data[k]) < 0.00000001) {
-							mat.Data[j].Data[k] = 0;
+				else {
+					for (int j = i + 1; j < mat.getRow(); j++) {
+						double scalar = mat.Data[j].Data[i] / mat.Data[i].Data[i];
+						for (int k = 0; k < mat.Data[j].Data.size(); k++) {
+							mat.Data[j].Data[k] -= mat.Data[i].Data[k] * scalar;
+							if (abs(mat.Data[j].Data[k]) < 0.00000001) {
+								mat.Data[j].Data[k] = 0;
+							}
 						}
 					}
 				}
@@ -308,85 +309,30 @@ Matrix Adjoint(const Matrix& m) {
 }
 
 Vector FindK(const Matrix& m, int n) {
-	Matrix m1 = m;
+	Matrix mat = m;
 	Vector v;
 	v.Data.resize(n);
-	if (m1.Data[0].Data[0] != 0) {
-		if (m1.Data[1].Data[1] == 0) {
-			v.Data[1] = 1;
-			if (m1.Data[1].Data[2] != 0) {
-				v.Data[2] = 0;
-				if (m1.Data[0].Data[1] != 0) {
-					v.Data[0] = 1;
-					v.Data[1] = m1.Data[0].Data[0] / m1.Data[0].Data[1] * -1;
-				}
-				else {
-					v.Data[0] = 0;
-				}
-			}
-			else {
-				if (m1.Data[0].Data[1] == 0) {
-					if (m1.Data[0].Data[2] == 0) {
-						v.Data[0] = 0;
-						v.Data[2] = -1;
-					}
-					else {
-						v.Data[1] = 0;
-						v.Data[0] = 1;
-						v.Data[2] = m1.Data[0].Data[0] / m1.Data[0].Data[2] * -1;
-					}
-				}
-				else {
-					if (m1.Data[0].Data[2] == 0) {
-						v.Data[2] = 0;
-						v.Data[0] = 1;
-						v.Data[1] = m1.Data[0].Data[0] / m1.Data[0].Data[1] * -1;
-					}
-					else {
-						v.Data[2] = 1;
-						v.Data[0] = (v.Data[1] * m1.Data[0].Data[1] + v.Data[2] * m1.Data[0].Data[2]) / m1.Data[0].Data[0] * -1;
-					}
+	for (int i = mat.Data.size() - 1; i >= 0; i--) {
+		if (mat.Data[i].Data[i] == 0) {
+			v.Data[i] = 1;
+			for (int j = i + 1; j < mat.Data[i].Data.size(); j++) {
+				if (mat.Data[i].Data[j] != 0) {
+					v.Data[j] = 0;
 				}
 			}
 		}
 		else {
-			if (m1.Data[1].Data[2] == 0) {
-				v.Data[1] = 0;
-				if (m1.Data[0].Data[2] == 0) {
-					v.Data[0] = 0;
-					v.Data[2] = 1;
+			v.Data[i] = 0;
+			if (i != mat.Data.size() - 1) {
+				double sum = 0;
+				for (int j = mat.Data.size() - 1; j >= i; j--) {
+					if (j == i) {
+						v.Data[j] = sum / mat.Data[i].Data[i] * -1;
+					}
+					else {
+						sum += v.Data[j] * mat.Data[i].Data[j];
+					}
 				}
-				else {
-					v.Data[0] = 1;
-					v.Data[2] = m1.Data[0].Data[0] / m1.Data[0].Data[2] * -1;
-				}
-			}
-			else {
-				v.Data[1] = 1;
-				v.Data[2] = m1.Data[1].Data[1] / m1.Data[1].Data[2] * -1;
-				v.Data[0] = (v.Data[1] * m1.Data[0].Data[1] + v.Data[2] * m1.Data[0].Data[2]) / m1.Data[0].Data[0] * -1;
-			}
-		}
-	}
-	else {
-		v.Data[0] = 1;
-		if (m1.Data[0].Data[1] != 0) {
-			if (m1.Data[0].Data[2] != 0) {
-				v.Data[1] = 1;
-				v.Data[2] = m1.Data[0].Data[1] / m1.Data[0].Data[2] * -1;
-			}
-			else {
-				v.Data[1] = 0;
-				v.Data[2] = 1;
-			}
-		}
-		else {
-			v.Data[1] = 1;
-			if (m1.Data[0].Data[2] != 0) {
-				v.Data[2] = 0;
-			}
-			else {
-				v.Data[2] = 1;
 			}
 		}
 	}
@@ -418,22 +364,48 @@ Matrix Eigen(const Matrix& m) {
 			m2.Data[i].Data[i] -= x2;
 		}
 		m1 = U_Triangle(m1);
-		if (m1.Data[1].Data[1] == 0) {
+		if (m1.Data[0].Data[0] == 0) {
 			v.Data[0] = 1;
-			v.Data[1] = m1.Data[0].Data[0] / m1.Data[0].Data[1] * -1;
-			v = Normal(v);
-			buff.Data.push_back(v);
+			v.Data[1] = v.Data[0] * m1.Data[0].Data[0] / m1.Data[0].Data[1] * -1;
+			if (m1.Data[0].Data[1] == 0) {
+				v.Data[1] = 0;
+			}
 		}
+		else {
+			if (m1.Data[0].Data[1] != 0) {
+				v.Data[0] = 1;
+				v.Data[1] = v.Data[0] * m1.Data[0].Data[0] / m1.Data[0].Data[1] * -1;
+			}
+			else {
+				v.Data[0] = 0;
+				v.Data[1] = 1;
+			}
+		}
+		v = Normal(v);
+		buff.Data.push_back(v);
 		if (x1 == x2) {
 			return Transpose(buff);
 		}
 		m2 = U_Triangle(m2);
-		if (m2.Data[1].Data[1] == 0) {
+		if (m2.Data[0].Data[0] == 0) {
 			v.Data[0] = 1;
-			v.Data[1] = m2.Data[0].Data[0] / m2.Data[0].Data[1] * -1;
-			v = Normal(v);
-			buff.Data.push_back(v);
+			v.Data[1] = v.Data[0] * m2.Data[0].Data[0] / m2.Data[0].Data[1] * -1;
+			if (m2.Data[0].Data[1] == 0) {
+				v.Data[1] = 0;
+			}
 		}
+		else {
+			if (m2.Data[0].Data[1] != 0) {
+				v.Data[0] = 1;
+				v.Data[1] = v.Data[0] * m2.Data[0].Data[0] / m2.Data[0].Data[1] * -1;
+			}
+			else {
+				v.Data[0] = 0;
+				v.Data[1] = 1;
+			}
+		}
+		v = Normal(v);
+		buff.Data.push_back(v);
 		return Transpose(buff);
 	}
 	else if (mat.getRow() == 3) {
@@ -444,10 +416,24 @@ Matrix Eigen(const Matrix& m) {
 		double x1, x2, x3, q, w, ang;
 		q = (pow(rr, 2) - 3 * r) / 9;
 		w = (2 * pow(rr, 3) - 9 * rr*r + 27 * con) / 54;
+		if (pow(w, 2) >= pow(q, 3)) {
+			Matrix err;
+			err.Name = "Error";
+			return err;
+		}
 		ang = acos(w / sqrt(pow(q, 3)));
 		x1 = -2 * sqrt(q)*cos(ang / 3) - rr / 3;
+		if (abs(x1) < 0.00000001) {
+			x1 = 0;
+		}
 		x2 = -2 * sqrt(q)*cos((ang + 2 * PI) / 3) - rr / 3;
+		if (abs(x2) < 0.00000001) {
+			x2 = 0;
+		}
 		x3 = -2 * sqrt(q)*cos((ang - 2 * PI) / 3) - rr / 3;
+		if (abs(x3) < 0.00000001) {
+			x3 = 0;
+		}
 		v.Data.resize(3);
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
@@ -509,7 +495,7 @@ std::vector<Vector> Power_Method(const Matrix& m) {
 		X.Data[i].Data[0] = 1;
 	}
 	mat = m;
-	for (int r = 0; r < 1500; r++) {
+	for (int r = 0; r < 2000; r++) {
 		X = mat * X;
 		double scalar = X.Data[0].Data[0];
 		int loc = 0;
@@ -546,6 +532,11 @@ std::vector<Vector> Power_Method(const Matrix& m) {
 	v.Data.resize(mat.Data.size());
 	for (int i = mat.Data.size() - 1; i >= 0; i--) {
 		if (mat.Data[i].Data[i] == 0) {
+			for (int j = i + 1; j < mat.Data[i].Data.size(); j++) {
+				if (mat.Data[i].Data[j] != 0) {
+					v.Data[j] = 0;
+				}
+			}
 			v.Data[i] = 1;
 		}
 		else {

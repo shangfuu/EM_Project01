@@ -306,7 +306,7 @@ namespace EM_Project1 {
 			else if (userCommand[0] == "/help" && userCommand->Length == 1) {
 				Output->Text += Environment::NewLine + "==> \" /help \" -m to See Matrix Command Format" + Environment::NewLine +
 					"==> \" /help \" -v to See Vector Command Format" + Environment::NewLine +
-					"==> \" /c o \" to Clear Output List" + Environment::NewLine + 
+					"==> \" /c o \" to Clear Output List" + Environment::NewLine +
 					"==> \" /c i \" to Clear Input List" + Environment::NewLine +
 					"==> * Must have Space between each Operator or variable" + Environment::NewLine + Environment::NewLine;
 			}
@@ -363,7 +363,7 @@ namespace EM_Project1 {
 						Output->Text += "-->" + Environment::NewLine;
 						for (int i = 0; i < result.getDim(); i++) {
 							Output->Text += result.Data[i].ToString();
-							if(i != result.getDim() -1)	Output->Text += ",  ";
+							if (i != result.getDim() - 1)	Output->Text += ",  ";
 						}
 						Output->Text += Environment::NewLine;
 					}
@@ -647,7 +647,7 @@ namespace EM_Project1 {
 					// 支援多項量輸入
 					std::vector<Vector>vecs;
 					Format_Muti(userCommand, vectors, Error, vecs);
-					
+
 					if (Error == Correct) {
 						for (int i = 0; i < vecs.size() - 1; i++) {
 							if (vecs[i].getDim() != vecs[i + 1].getDim()) {
@@ -714,7 +714,7 @@ namespace EM_Project1 {
 			// 如果有 Load Matrix
 			else if (dataManager->HasMatrix() && this->VectorLabel->Text == L"Matrix") {
 
-				if (userCommand[0] == "/help" && userCommand[1] ==  "-m") {
+				if (userCommand[0] == "/help" && userCommand[1] == "-m") {
 					Output->Text += Environment::NewLine + "Matrix Operation Command Format:" + Environment::NewLine +
 						"* mx can be Mutiple Matrix Operation *" + Environment::NewLine + "-- e.g mx = m0 + m1 - m2" + Environment::NewLine +
 						"- Print :  print mx" + Environment::NewLine + "- Multiple Matrix Operation : MMO mx" + Environment::NewLine +
@@ -851,7 +851,7 @@ namespace EM_Project1 {
 					Format_One(userCommand, matrices, M_Error, mat);
 					if (!M_Error) {
 						if (mat.getCol() != mat.getRow()) {
-							Output->Text += "- error" +Environment::NewLine;
+							Output->Text += "- error" + Environment::NewLine;
 						}
 						else {
 							mat = Inverse(mat);
@@ -887,27 +887,32 @@ namespace EM_Project1 {
 						else {
 							int sizeV = mat.getCol();
 							mat = Eigen(mat);
-							Output->Text += "Eigen(" + gcnew String(mat.Name.c_str()) + ")" + Environment::NewLine;
-							Matrix eVector, eValue;
-							for (int i = 0; i < mat.getRow(); i++) {
-								Vector tmpVec,tmpVal;
-								for (int j = 0; j < mat.getCol(); j++) {
-									if (i < sizeV && j < sizeV) {
-										tmpVal.Data.push_back(mat.Data[i].Data[j]);
-									//	eValue.Data[i].Data[j] = mat.Data[i].Data[j];
-									}
-									else {
-										tmpVec.Data.push_back(mat.Data[i].Data[j]);
-									//	eVector.Data[i].Data[j] = mat.Data[i].Data[j];
-									}
-								}
-								eVector.Data.push_back(tmpVec);
-								eValue.Data.push_back(tmpVal);
+							if (mat.Name == "Error") {
+								Output->Text += "- error " + Environment::NewLine;
 							}
-							eVector.Name = "v";
-							eValue.Name = "d";
-							eVector.print(Output);
-							eValue.print(Output);
+							else {
+								Output->Text += "Eigen(" + gcnew String(mat.Name.c_str()) + ")" + Environment::NewLine;
+								Matrix eVector, eValue;
+								for (int i = 0; i < mat.getRow(); i++) {
+									Vector tmpVec, tmpVal;
+									for (int j = 0; j < mat.getCol(); j++) {
+										if (i < sizeV && j < sizeV) {
+											tmpVal.Data.push_back(mat.Data[i].Data[j]);
+											//	eValue.Data[i].Data[j] = mat.Data[i].Data[j];
+										}
+										else {
+											tmpVec.Data.push_back(mat.Data[i].Data[j]);
+											//	eVector.Data[i].Data[j] = mat.Data[i].Data[j];
+										}
+									}
+									eVector.Data.push_back(tmpVec);
+									eValue.Data.push_back(tmpVal);
+								}
+								eVector.Name = "v";
+								eValue.Name = "d";
+								eVector.print(Output);
+								eValue.print(Output);
+							}
 						}
 					}
 				}
@@ -928,7 +933,7 @@ namespace EM_Project1 {
 									Output->Text += "d = " + Environment::NewLine;
 								}
 								for (int j = 0; j < PM[i].getDim(); j++) {
-									if(j == 0)
+									if (j == 0)
 										Output->Text += PM[i].Data[j].ToString();
 									else
 										Output->Text += ",  " + PM[i].Data[j].ToString();
